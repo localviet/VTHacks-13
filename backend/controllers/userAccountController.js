@@ -24,22 +24,23 @@ const generateRefreshToken = (userData) => {
 };
 const login = asyncHandler(async (req, res) => {
   console.log("Login attempt...");
-  const { phoneNumber, password } = req.body;
-  if (!phoneNumber && !password) {
+  console.log(req.query);
+  const { email, password } = req.query;
+  if (!email && !password) {
     return res.status(400).json({ message: "Phone and password are required" });
   }
-  console.log("finding user", phoneNumber);
+  console.log("finding user", email);
 
-  let user = await CreatorUser.findOne({ phoneNumber: phoneNumber });
+  let user = await CreatorUser.findOne({ email: email });
   let userType = "CreatorUser";
   if (!user) {
-    user = await CorpUser.findOne({ phoneNumber: phoneNumber });
+    user = await CorpUser.findOne({ email: email });
     userType = "CorpUser";
   }
   console.log("User found by phone:", user);
   console.log(user.password);
   if (user && (await bcrypt.compare(password, user.password))) {
-    const userData = { user: phoneNumber, userType: userType };
+    const userData = { user: email, userType: userType };
     console.log("generating access & refresh");
     const accessToken = generateAccessToken(userData);
     const refreshToken = generateRefreshToken(userData);
@@ -79,14 +80,15 @@ const creatorUserRegister = asyncHandler(async (req, res) => {
   const {
     firstName,
     lastName,
-    phoneNumber,
+    email,
     password,
     bio,
     youtube,
     instagram,
     tiktok,
   } = req.body;
-  if (!firstName || !lastName || !phoneNumber || !password) {
+  console.log("in creator register with", req.body);
+  if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({ message: "all fields are required" });
   }
   const salt = await bcrypt.genSalt(10);
@@ -94,7 +96,7 @@ const creatorUserRegister = asyncHandler(async (req, res) => {
 
   const userData = {
     firstName: firstName,
-    phoneNumber: phoneNumber,
+    email: email,
     lastName: lastName,
     password: hashedPassword,
   };

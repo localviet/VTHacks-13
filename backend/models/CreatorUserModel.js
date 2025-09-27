@@ -5,11 +5,13 @@ const creatorUserSchema = new mongoose.Schema(
     firstName: { type: String, required: [true, "Please add a first name"] },
     lastName: { type: String, required: [true, "Please add a last name"] },
 
-    phoneNumber: {
+    email: {
       type: String,
-      required: [true, "Please add a phone number"],
       unique: true,
-      match: [/^\d{10}$/, "Please add a valid phone number"],
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please add a valid email address",
+      ],
     },
 
     password: {
@@ -25,19 +27,16 @@ const creatorUserSchema = new mongoose.Schema(
 
     instagram: {
       type: String,
-      unique: true,
       sparse: true,
       trim: true,
     },
     youtube: {
       type: String,
-      unique: true,
       sparse: true,
       trim: true,
     },
     tiktok: {
       type: String,
-      unique: true,
       sparse: true,
       trim: true,
     },
@@ -53,19 +52,19 @@ const creatorUserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-creatorUserSchema.pre("validate", function (next) {
-  const hasAnySocial =
-    (this.instagram && this.instagram.trim()) ||
-    (this.youtube && this.youtube.trim()) ||
-    (this.tiktok && this.tiktok.trim());
+// creatorUserSchema.pre("validate", function (next) {
+//   const hasAnySocial =
+//     (this.instagram && this.instagram.trim()) ||
+//     (this.youtube && this.youtube.trim()) ||
+//     (this.tiktok && this.tiktok.trim());
 
-  if (!hasAnySocial) {
-    this.invalidate(
-      "social",
-      "At least one social media account (Instagram, YouTube, or TikTok) is required."
-    );
-  }
-  next();
-});
+//   if (!hasAnySocial) {
+//     this.invalidate(
+//       "social",
+//       "At least one social media account (Instagram, YouTube, or TikTok) is required."
+//     );
+//   }
+//   next();
+// });
 
 export default mongoose.model("CreatorUser", creatorUserSchema);

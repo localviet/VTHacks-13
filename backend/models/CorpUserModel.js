@@ -18,7 +18,7 @@ const CompanySchema = new mongoose.Schema({
     unique: true,
     match: [/^\S+@\S+\.\S+$/, "Enter a valid email"],
   },
-  phone: { type: String, trim: true, required: true, unique: true },
+  //phone: { type: String, trim: true, required: true, unique: true },
   website: { type: String, trim: true },
   instagram: { type: String, trim: true },
   tiktok: { type: String, trim: true },
