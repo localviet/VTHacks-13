@@ -11,6 +11,8 @@ import Settings from './pages/Settings.jsx'
 //Business
 import DashboardBusiness from './pages/Business/DashboardBusiness.jsx'
 import BusinessSignUp from './pages/Business/BusinessSignUp.jsx'
+import BusinessSearch from './pages/Business/BusinessSearch.jsx'
+import BusinessSettings from './pages/Business/BusinessSettings.jsx'
 
 import './App.css'
 
@@ -28,6 +30,9 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/business/signup" element={<BusinessSignUp />} />
           <Route path="business/dashboard" element={<DashboardBusiness />} />
+          <Route path="business/search" element={<BusinessSearch />} />
+          <Route path="business/setting" element={<BusinessSettings />} />
+
         </Routes>
       </Router>
     </>
