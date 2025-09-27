@@ -1,21 +1,22 @@
 import { connectDB } from "./config/db.js";
 import express, { Router } from "express";
 import dotenv from "dotenv";
-
+import apiRouter from "./routes/accountRoutes.js";
+import offerRouter from "./routes/offerRoutes.js";
 dotenv.config();
 
 //express app
 const app = express();
-const apiRouter = Router();
 const PORT = process.env.PORT || 5001;
 
 //middleware
 app.use(express.json()); //to be able to send json data
 
-//app.use("/api/", Router);
+app.use("/api/", apiRouter);
+app.use("/offer/", offerRouter);
 // connect to db
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log("Server started on PORT: ", PORT);
+    console.log("Server started on PORT:", PORT);
   });
 });

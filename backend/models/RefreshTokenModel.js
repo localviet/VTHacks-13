@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "./UserModel.js";
+
 const refreshTokenSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
