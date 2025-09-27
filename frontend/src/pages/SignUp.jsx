@@ -297,7 +297,7 @@ const SignUpPage = () => {
           {/* Business? link */}
           <div className="text-center text-sm text-gray-600">
             Have a business?{' '}
-            <Link to="/signin" className="font-medium text-red-500 hover:underline">
+            <Link to="/business/signup" className="font-medium text-red-500 hover:underline">
               Create a Business Account
             </Link>
           </div>
