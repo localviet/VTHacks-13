@@ -1,0 +1,17 @@
+/* src/components/RotatingText.css */
+
+.rotating-word {
+  display: inline-block; /* Ensures transform works correctly */
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  color: inherit;  /* Example color, change as you like */
+}
+
+.rotating-word.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rotating-word.fade-out {
+  opacity: 0;
+  transform: translateY(-20px); /* Moves the word up as it fades out */
+}
