@@ -7,6 +7,11 @@ import SignInPage from './pages/SignIn.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Search from './pages/Search.jsx'
 import Settings from './pages/Settings.jsx'
+
+//Business
+import DashboardBusiness from './pages/Business/DashboardBusiness.jsx'
+import BusinessSignUp from './pages/Business/BusinessSignUp.jsx'
+
 import './App.css'
 
 function App() {
@@ -21,6 +26,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/search" element={<Search />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/business/signup" element={<BusinessSignUp />} />
+          <Route path="business/dashboard" element={<DashboardBusiness />} />
         </Routes>
       </Router>
     </>
