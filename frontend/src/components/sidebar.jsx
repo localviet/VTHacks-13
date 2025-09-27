@@ -38,12 +38,13 @@ const sidebar = ({sidebarOpen, setSidebarOpen}) => {
                     <Search className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
                     {sidebarOpen && <span className="font-medium">Search</span>}
                 </Link>
-                <div
+                <Link
+                    to="/settings"
                     className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50`}
                 >
                     <Settings className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
                     {sidebarOpen && <span className="font-medium">Settings</span>}
-                </div>
+                </Link>
             </nav>
             </div>
         </div>
