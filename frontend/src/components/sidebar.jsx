@@ -1,7 +1,8 @@
 import { 
   Settings, 
   Search,
-  TrendingUp
+  TrendingUp,
+  Home
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -20,7 +21,7 @@ const sidebar = ({sidebarOpen, setSidebarOpen}) => {
                 <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-white" />
                 </div>
-                {sidebarOpen && <h1 className="text-xl font-bold text-gray-800">Ignite</h1>}
+                 {sidebarOpen && <h1 className="text-xl font-bold text-gray-800">Ignite | <span className="text-blue-600">Business</span></h1>}
             </div>
 
             <nav className="space-y-2">
@@ -28,8 +29,9 @@ const sidebar = ({sidebarOpen, setSidebarOpen}) => {
                     to="/dashboard"
                     className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 mb-5`}
                 >
-                    <Search className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
-                    {sidebarOpen && <span className="font-medium">Dashboard</span>}
+                    <Home className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
+                    {sidebarOpen && <span className="font-medium">Dashboard </span>}
+
                 </Link>
                 <Link
                     to="/search"
@@ -38,12 +40,13 @@ const sidebar = ({sidebarOpen, setSidebarOpen}) => {
                     <Search className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
                     {sidebarOpen && <span className="font-medium">Search</span>}
                 </Link>
-                <div
+                <Link
+                    to="/settings"
                     className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50`}
                 >
                     <Settings className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
                     {sidebarOpen && <span className="font-medium">Settings</span>}
-                </div>
+                </Link>
             </nav>
             </div>
         </div>
