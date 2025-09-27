@@ -1,33 +1,21 @@
-const express = require('express');
+import { connectDB } from "./config/db.js";
+import express, { Router } from "express";
+import dotenv from "dotenv";
 
-
-const mongoose = require('mongoose');
-const workoutRoutes = require('./routes/workouts');
+dotenv.config();
 
 //express app
 const app = express();
+const apiRouter = Router();
+const PORT = process.env.PORT || 5001;
 
 //middleware
 app.use(express.json()); //to be able to send json data
 
-app.use((req, res, next) => {
-  console.log(req.path, req.method)
-  next()
-});
-
-
-//routes
-app.use('/api/workouts', workoutRoutes)
-
+//app.use("/api/", Router);
 // connect to db
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected to database successfully!");
-    // listen for requests
-    app.listen(process.env.PORT, () => {
-      console.log('Listening on port', process.env.PORT);
-    });
-  })
-  .catch((error) => {
-    console.log(error);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log("Server started on PORT: ", PORT);
   });
+});
