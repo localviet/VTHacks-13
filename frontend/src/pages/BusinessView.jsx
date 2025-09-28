@@ -7,7 +7,7 @@ export default function BusinessView() {
   // Mock business data - replace with actual data from your backend
   const business = {
     name: "Tech Solutions Inc.",
-    logo: "https://placeholder.com/150", // Add actual logo URL
+    logo: "https://placeholder.com/150",
     about: "We are a leading technology solutions provider specializing in innovative software development and digital transformation. Our team of experts is dedicated to delivering cutting-edge solutions that help businesses thrive in the digital age.",
     website: "https://techsolutions.example.com",
     location: "San Francisco, CA",
@@ -29,18 +29,8 @@ export default function BusinessView() {
         </header>
 
         <main className="p-6">
-          {/* Top section with Make Offer button */}
-          <div className="mb-6 flex justify-end">
-            <button 
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors"
-              onClick={() => {/* Add your offer logic here */}}
-            >
-              Make an Offer
-            </button>
-          </div>
-
           {/* Logo and Business Details in a grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Logo Section */}
             <div className="bg-white rounded-xl shadow-sm border p-6 flex flex-col items-center justify-center">
               <img 
@@ -75,6 +65,16 @@ export default function BusinessView() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Make Offer button at the bottom */}
+          <div className="flex justify-center mt-8">
+            <button 
+              className="bg-blue-500 hover:bg-blue-600 text-white px-12 py-4 rounded-lg text-lg font-medium transition-colors w-full md:w-1/2 text-center"
+              onClick={() => {/* Add your offer logic here */}}
+            >
+              Make an Offer
+            </button>
           </div>
         </main>
       </div>
