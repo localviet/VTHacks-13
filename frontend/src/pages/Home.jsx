@@ -1,27 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import RotatingText from "../components/RotatingText.jsx";
+import Logo from "../components/Logo.jsx";
 import { Link } from "react-router-dom";
 
 // --- Icon Components (using SVG for portability) ---
-const SproutIcon = ({ className }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M7 20h10" />
-    <path d="M10 20c5.5-2.5.8-6.4 3-10" />
-    <path d="M9.5 9.4c1.1.8 1.8 2.2 1.5 3.6-1.1.8-2.6 1.5-4 1" />
-    <path d="M14.1 6a7 7 0 0 0-9.2 0" />
-  </svg>
-);
 
 const UsersIcon = ({ className }) => (
   <svg
@@ -170,7 +152,7 @@ export default function App() {
       >
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <SproutIcon className="w-7 h-7 text-red-500" />
+            <Logo className="w-7 h-7" />
             <span className="text-2xl font-bold text-gray-900">Ignite</span>
           </div>
           <nav className="flex items-center space-x-4">
@@ -219,7 +201,7 @@ export default function App() {
           <div className="absolute inset-0 hero-glow rounded-full w-1/2 h-1/2 m-auto blur-3xl opacity-50"></div>
           <div className="relative z-10 flex flex-col items-center">
             <div className="mb-6 subtle-pulse">
-              <SproutIcon className="w-24 h-24 text-red-500" />
+              <Logo className="w-24 h-24" alt="Ignite large logo" />
             </div>
             <h1 className="text-5xl md:text-9xl font-bold tracking-tight pb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-500 to-orange-500 animated-gradient">
               Ignite Your Content

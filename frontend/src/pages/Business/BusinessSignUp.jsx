@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Lock, User, Sprout } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
+import Logo from "../../components/Logo.jsx";
 import axios from "axios";
 const SignUpPage = () => {
   // State to manage the header's appearance on scroll
@@ -45,7 +46,7 @@ const SignUpPage = () => {
       >
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <Sprout className="w-7 h-7 text-red-500" />
+            <Logo className="w-7 h-7" />
             <span className="text-2xl font-bold text-gray-900">Ignite</span>
           </Link>
           <nav className="flex items-center space-x-4">
