@@ -1,18 +1,47 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Sidebar from "../components/sidebar.jsx";
 
 export default function BusinessView() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const job = location.state?.jobData || {};
-  // Build business object from props with sensible fallbacks to mock data
+  const { id: jobId } = useParams();
+  const [job, setJob] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch job listing by id
+  useEffect(() => {
+    if (!jobId) return;
+    let mounted = true;
+    const fetchJob = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`http://localhost:5001/job-listing/job-listing/${jobId}`);
+        if (!res.ok) throw new Error(`Server responded ${res.status}`);
+        const data = await res.json();
+        // Expect { jobListing: ... }
+        const j = data.jobListing || data.job || null;
+        if (mounted) setJob(j);
+      } catch (e) {
+        console.error('Failed to fetch job by id:', e);
+        if (mounted) setError(e.message || 'Failed to fetch');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    fetchJob();
+    return () => { mounted = false; };
+  }, [jobId]);
+
+  // Build business object from fetched job with sensible fallbacks to mock data
   const business = {
-    name: job.jobname || "Tech Solutions Inc.",
-    logo: job.imageUrl || "https://placeholder.com/150",
-    about: job.description || "We are a leading technology solutions provider specializing in innovative software development and digital transformation. Our team of experts is dedicated to delivering cutting-edge solutions that help businesses thrive in the digital age.",
-    website: job.website || "https://techsolutions.example.com",
-    tags: job.tags || ["Technology", "Software", "Innovation"],
-    price: job.price ?? 294
+    name: (job && ((job.company && job.company.name) || job.name || job.title)) || "Tech Solutions Inc.",
+    logo: (job && ((job.company && job.company.logo) || job.logo || 'https://placeholder.com/150')) || "https://placeholder.com/150",
+    about: (job && (job.description || job.desc)) || "We are a leading technology solutions provider specializing in innovative software development and digital transformation. Our team of experts is dedicated to delivering cutting-edge solutions that help businesses thrive in the digital age.",
+    website: (job && ((job.company && job.company.website) || job.website)) || "https://techsolutions.example.com",
+    tags: (job && (job.tags || [])) || ["Technology", "Software", "Innovation"],
+    price: (job && (Array.isArray(job.salaryRange) && job.salaryRange.length ? job.salaryRange[0] : job.price)) ?? 294
   };
   const [modalOpen, setModalOpen] = useState(false);
   const [offerStatus, setOfferStatus] = useState('idle'); // idle | sending | success | error
@@ -30,6 +59,8 @@ export default function BusinessView() {
         </header>
 
         <main className="p-6">
+          {loading && <div className="text-center py-12">Loading...</div>}
+          {error && <div className="text-center py-12 text-red-600">Failed to load job: {error}</div>}
           {/* Logo and Business Details in a grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Logo Section */}

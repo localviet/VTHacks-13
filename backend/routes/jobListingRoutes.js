@@ -17,4 +17,5 @@ jobListingRouter.post(
 );
 jobListingRouter.get("/all-job-listings", getAllJobListings);
 jobListingRouter.get("/job-listing/:id", getJobListingById);
+//jobListingRouter.get("/job-listing/:id", getJobListingById);
 export default jobListingRouter;
