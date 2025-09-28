@@ -30,4 +30,20 @@ VITE_API_URL = <http link to backend>
 ```
 npm run dev
 ```
-
+# Project Structure
+.
+└── VTHacks-13/
+    ├── backend/                     #to host backend server
+    │   ├── config/                  #connect to Mongodb database
+    │   ├── controllers/             #controllers for the API endpoints
+    │   ├── models/                  #Mongodb models for objects
+    │   ├── node_modules/            #dependencies
+    │   └── routes/                  #API endpoints
+    ├── frontend/                    #to host frontend server
+    │   ├── node_modules/            #dependencies 
+    │   ├── public/                  #contains logo
+    │   └── src/                     #contains code for project
+    │       ├── assets/              #unimportant React sample svg
+    │       ├── components/          #React components
+    │       └── pages/               #web pages
+    │           └── Business/        #web pages for businesses
