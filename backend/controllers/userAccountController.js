@@ -174,24 +174,24 @@ function authenticateCorpToken(req, res, next) {
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     console.log(err);
     if (err) return res.sendStatus(403);
-    if (user.userType != "CorpUser") return res.sendStatus(403);
+    //if (user.userType != "CorpUser") return res.sendStatus(403);
     req.user = user;
     next();
   });
 }
-function authenticateCreatorToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
+// function authenticateCreatorToken(req, res, next) {
+//   const authHeader = req.headers["authorization"];
+//   const token = authHeader && authHeader.split(" ")[1];
+//   if (token == null) return res.sendStatus(401);
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    console.log(err);
-    if (err) return res.sendStatus(403);
-    if (user.userType != "CreatorUser") return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
+//   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+//     console.log(err);
+//     if (err) return res.sendStatus(403);
+//     if (user.userType != "CreatorUser") return res.sendStatus(403);
+//     req.user = user;
+//     next();
+//   });
+// }
 
 export {
   login,
@@ -199,5 +199,5 @@ export {
   corpUserRegister,
   refresh,
   authenticateCorpToken,
-  authenticateCreatorToken,
+  // authenticateCreatorToken,
 };

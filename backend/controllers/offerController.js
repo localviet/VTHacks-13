@@ -2,7 +2,7 @@ import CorpsOffer from "../models/CorpsOfferModel.js";
 import CreatorsOffer from "../models/CreatorsOfferModel.js";
 import CreatorUser from "../models/CreatorUserModel.js";
 import CorpUser from "../models/CorpUserModel.js";
-const createCorpsOffer = async (req, res) => {
+const createOffer = async (req, res) => {
   console.log("Creating offer...");
   const { to, desc } = req.body;
   console.log(req.user);
@@ -15,20 +15,36 @@ const createCorpsOffer = async (req, res) => {
   };
   console.log(offerData);
   console.log();
-  const offer = await CorpsOffer.create(offerData);
-  await CreatorUser.findByIdAndUpdate(
-    to,
-    { $push: { offers: offer._id } },
-    { new: true }
-  );
-  await CorpUser.findByIdAndUpdate(
-    req.user._id,
-    { $push: { offers: offer._id } },
-    { new: true }
-  );
+  if (req.user.userType == "CorpUser") {
+    const offer = await CorpsOffer.create(offerData);
+    await CreatorUser.findByIdAndUpdate(
+      to,
+      { $push: { offers: offer._id } },
+      { new: true }
+    );
+    await CorpUser.findByIdAndUpdate(
+      req.user._id,
+      { $push: { offers: offer._id } },
+      { new: true }
+    );
+  } else {
+    console.log("creator user detected");
+    const offer = await CreatorsOffer.create(offerData);
+    console.log("offer created:", offer);
+    await CorpUser.findByIdAndUpdate(
+      to,
+      { $push: { offers: offer._id } },
+      { new: true }
+    );
+    await CreatorUser.findByIdAndUpdate(
+      req.user._id,
+      { $push: { offers: offer._id } },
+      { new: true }
+    );
+  }
   return res
     .status(201)
-    .json({ message: "Offer created successfully", offer: offer });
+    .json({ message: "Offer created successfully", offerData: offerData });
 };
 const deleteOffer = async (req, res) => {
   const { to, from } = req.body;
@@ -85,4 +101,4 @@ const getReceivedOffers = async (req, res) => {
     return res.status(200).json({ offers: OfferObjects });
   }
 };
-export { createCorpsOffer, deleteOffer, changeOfferStatus, getReceivedOffers };
+export { createOffer, deleteOffer, changeOfferStatus, getReceivedOffers };
