@@ -292,12 +292,6 @@ export default function IgniteDashboard() {
             <div className="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">All Offers</h2>
-                <button
-                  className="rounded-md px-2 py-1 text-gray-600 hover:bg-gray-100"
-                  onClick={() => setShowBrandsModal(false)}
-                >
-                  ×
-                </button>
               </div>
 
               {/* Loading / error states */}
