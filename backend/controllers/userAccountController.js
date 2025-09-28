@@ -40,7 +40,7 @@ const login = asyncHandler(async (req, res) => {
   console.log("User found by phone:", user);
   console.log(user.password);
   if (user && (await bcrypt.compare(password, user.password))) {
-    const userData = { user: email, userType: userType };
+    const userData = { _id: user._id, userType: userType };
     console.log("generating access & refresh");
     const accessToken = generateAccessToken(userData);
     const refreshToken = generateRefreshToken(userData);
@@ -66,7 +66,7 @@ const login = asyncHandler(async (req, res) => {
     }
 
     return res.status(200).json({
-      user: user,
+      userId: user._id,
       accessToken: accessToken,
       refreshToken: refreshToken,
     });
