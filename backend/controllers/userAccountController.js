@@ -8,20 +8,23 @@ import CorpUser from "../models/CorpUserModel.js";
 
 dotenv.config();
 
-// const logout = asyncHandler(async (req, res) => {
-//   const { }
-// });
-
+// Generate JWT
 const generateAccessToken = (userData) => {
   return jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "1y",
   });
 };
+
+// Generate Refresh Token
 const generateRefreshToken = (userData) => {
   return jwt.sign(userData, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: "1y",
   });
 };
+
+// @desc    Login user
+// @route   GET /api/user/login
+// @access  Public
 const login = asyncHandler(async (req, res) => {
   console.log("Login attempt...");
   console.log(req.query);
@@ -76,6 +79,9 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Register new user
+// @route   POST /api/user/register
+// @access  Public
 const creatorUserRegister = asyncHandler(async (req, res) => {
   const {
     firstName,
@@ -116,6 +122,9 @@ const creatorUserRegister = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Register new corp user
+// @route   POST /api/user/corpRegister
+// @access  Public
 const corpUserRegister = asyncHandler(async (req, res) => {
   const { businessName, email, password, website } = req.body;
   console.log("in corp register with", req.body);
@@ -141,6 +150,9 @@ const corpUserRegister = asyncHandler(async (req, res) => {
   });
 });
 
+//  @desc    Refresh access token
+//  @route   POST /api/user/refresh
+//  @access  Public
 const refresh = asyncHandler(async (req, res) => {
   console.log("Refreshing token...");
   if (req.body.refreshToken == null) return res.sendStatus(401);
@@ -155,6 +167,7 @@ const refresh = asyncHandler(async (req, res) => {
   );
   console.log("Token matches:", tokenMatches);
   if (!tokenMatches) return res.sendStatus(403);
+  // Verify the refresh token
   jwt.verify(
     req.body.refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
@@ -166,11 +179,13 @@ const refresh = asyncHandler(async (req, res) => {
   );
 });
 
+// Middleware to authenticate CorpUser
 function authenticateCorpToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) return res.sendStatus(401);
 
+  // Verify the token
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     console.log(err);
     if (err) return res.sendStatus(403);
@@ -179,6 +194,7 @@ function authenticateCorpToken(req, res, next) {
     next();
   });
 }
+// Middleware to authenticate CreatorUser
 function authenticateCreatorToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
