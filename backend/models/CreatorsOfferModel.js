@@ -11,6 +11,10 @@ const creatorsOfferSchema = new mongoose.Schema(
       ref: "CreatorUser",
       required: true,
     },
+    fromName: {
+      type: String,
+      required: true,
+    },
     desc: {
       type: String,
       maxLength: 1500,
@@ -20,6 +24,10 @@ const creatorsOfferSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    deadline: {
+      type: Date,
+    },
+    salary: { type: Number, required: true },
   },
   { timestamps: true }
 );

@@ -15,7 +15,7 @@ const offerRouter = Router();
 offerRouter.post("/create-offer", authenticateCorpToken, createOffer);
 offerRouter.delete("/delete-corps-offer", authenticateCorpToken, deleteOffer);
 offerRouter.delete(
-  "/delete-creators-offer",
+  "/delete-offer",
   //authenticateCreatorToken,
   authenticateCorpToken,
   deleteOffer
