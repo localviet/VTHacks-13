@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Sidebar from "../../components/BusinessSidebar.jsx";
 import { MessageCircle } from "lucide-react";
-
+import axios from 'axios';
 export default function UserView() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { id } = useParams();
@@ -199,21 +199,34 @@ export default function UserView() {
                 <button
                   className="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60"
                   onClick={async () => {
+                    console.log("IN HERE");
                     if (offerStatus === 'sending') return;
                     try {
+                        console.log("IN HERE 2");
                       setOfferStatus('sending');
                       setOfferError(null);
+                      console.log("IN HERE 3");
+                      const accessToken = localStorage.getItem('accessToken');
                       const amountEl = document.getElementById('offer-amount');
                       const msgEl = document.getElementById('offer-message');
+                      const decoded = await axios.request({
+                        method:'GET',url:'http://localhost:5001/api/solveJWT',
+                        headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                        }});
+                      console.log(decoded);
                       const payload = {
-                        userId: user._id || user.id,
-                        amount: Number(amountEl?.value || 0),
-                        message: msgEl?.value || ''
+                        to: user._id || user.id,
+                        salary: Number(amountEl?.value || 0),
+                        desc: msgEl?.value || '',
+                        deadline: new Date(Date.now() + 7*24*60*60*1000).toISOString() // default 7 days from now
                       };
 
                       const resp = await fetch('http://localhost:5001/offer/create-offer', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${accessToken}`
+                         },
                         body: JSON.stringify(payload)
                       });
                       if (!resp.ok) {
