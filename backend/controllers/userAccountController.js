@@ -193,6 +193,16 @@ const getAllUsers = asyncHandler(async (req, res) => {
   }
 });
 
+const getAllCreators = asyncHandler(async (req, res) => {
+  try {
+    const creators = await CreatorUser.find().select('-password');
+    return res.status(200).json({ creators });
+  } catch (error) {
+    console.error('Error fetching creators:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // @desc    Get user by id (search creators and corps)
 // @route   GET /api/users/:id
 // @access  Public
@@ -250,6 +260,7 @@ export {
   login,
   creatorUserRegister,
   corpUserRegister,
+  getAllCreators,
   refresh,
   getAllUsers,
   getUserById,

@@ -23,7 +23,7 @@ export default function BusinessesView() {
         // backend mounts account routes at /api/ (see backend/server.js)
         // default to localhost backend port used in backend/server.js if VITE_API_BASE is not set
         const apiBase = import.meta.env.VITE_API_BASE || "http://localhost:5001";
-        const res = await fetch(`${apiBase}/api/users`);
+        const res = await fetch(`${apiBase}/api/creators`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const contentType = res.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {
