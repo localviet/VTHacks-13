@@ -4,13 +4,11 @@ const creatorsOfferSchema = new mongoose.Schema(
     to: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "CorpUser",
-      unique: true,
       required: true,
     },
     from: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "CreatorUser",
-      unique: true,
       required: true,
     },
     desc: {

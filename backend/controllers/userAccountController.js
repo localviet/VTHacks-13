@@ -14,7 +14,7 @@ dotenv.config();
 
 const generateAccessToken = (userData) => {
   return jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "1y",
   });
 };
 const generateRefreshToken = (userData) => {
