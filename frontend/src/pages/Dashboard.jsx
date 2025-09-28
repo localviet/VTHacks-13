@@ -101,16 +101,20 @@ export default function IgniteDashboard() {
   const handleViewAll = async () => {
     try {
       setLoadingOffers(true);
-      console.log("Fetching offers...");
       setErrorOffers("");
+      console.log("Fetching offers...");
+
+      const token = localStorage.getItem("token"); // or however you store it
+
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/offer/get-received-offers`,
         {
-          // If you need auth: headers: { Authorization: `Bearer ${token}` }
-          // If you need query params: params: { page: 1, limit: 20 }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      // Adjust shape if your API wraps data: res.data.data or res.data.offers, etc.
+
       setOfferList(Array.isArray(res.data) ? res.data : res.data?.offers ?? []);
       setShowBrandsModal(true);
     } catch (err) {
