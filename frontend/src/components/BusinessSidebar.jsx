@@ -3,6 +3,7 @@ import {
   Search,
   TrendingUp,
   Home
+    ,LogOut
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -52,6 +53,14 @@ const sidebar = ({sidebarOpen, setSidebarOpen}) => {
                     <Settings className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
                     {sidebarOpen && <span className="font-medium">Settings</span>}
                 </Link>
+                {/* Logout button (not a link) */}
+                <button
+                    onClick={() => console.log('Business Logout clicked')}
+                    className={`w-full text-left flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 mt-4 px-0 py-2`}
+                >
+                    <LogOut className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} color="red" />
+                    {sidebarOpen && <span className="font-medium">Logout</span>}
+                </button>
             </nav>
             </div>
         </div>
