@@ -32,7 +32,6 @@ npm run dev
 ```
 # Project Structure
 ```
-.
 └── VTHacks-13/
     ├── backend/                     #to host backend server
     │   ├── config/                  #connect to Mongodb database
