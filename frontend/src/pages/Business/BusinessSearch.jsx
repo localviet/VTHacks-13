@@ -19,7 +19,7 @@ export default function BusinessesView() {
         { platform: "TikTok", handle: "@ava.tok", followers: 98000 },
         { platform: "YouTube", handle: "AvaReynolds", followers: 22000 }
       ],
-      imageUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1200&q=80&auto=format&fit=crop",
+      imageUrl: "https://picsum.photos/id/1/200/300",
       bio: "Lifestyle creator focusing on eco-friendly living, affordable style, and short-form storytelling.",
       tags: ["lifestyle", "sustainable", "fashion"],
     },
@@ -96,7 +96,7 @@ export default function BusinessesView() {
         </div>
 
         <main className="p-6">
-          <div className="space-y-6">
+          <div className="grid grid-cols-3 gap-6">
             {filteredCreators.map((creator) => {
               // pick top 2 socials by followers
               const topSocials = (creator.socials || []).slice().sort((a, b) => (b.followers || 0) - (a.followers || 0)).slice(0, 2);
@@ -141,16 +141,15 @@ export default function BusinessesView() {
                   </div>
 
                   {/* Tags + actions */}
-                  <div className="p-4 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div className="p-4 border-t flex flex-col items-start gap-4">
                     <div className="flex flex-wrap gap-2">
                       {creator.tags.map((tag, i) => (
                         <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">#{tag}</span>
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Invite</button>
-                      <button className="border border-gray-200 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-50">View Profile</button>
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                      <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 w-full md:w-auto">Invite</button>
                     </div>
                   </div>
                 </div>
