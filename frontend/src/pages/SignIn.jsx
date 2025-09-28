@@ -6,6 +6,22 @@ import { Mail, Lock, Sprout } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+const solveJWT = async (token) => {
+  try {
+    const response = await axios.request({
+      url: `${import.meta.env.VITE_API_URL}/api/solveJWT`,
+      method: "get",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error solving JWT:", error);
+    return null;
+  }
+};
+
 const SignInPage = () => {
   const navigate = useNavigate();
   // State to manage the header's appearance on scroll
@@ -86,7 +102,15 @@ const SignInPage = () => {
                   localStorage.setItem("accessToken", res.data.accessToken);
                   localStorage.setItem("refreshToken", res.data.refreshToken);
                   // Redirect to dashboard or another page after successful login
-                  navigate("/dashboard");
+                  console.log(res.data.accessToken);
+                  solveJWT(res.data.accessToken).then((data) => {
+                    console.log(data);
+                    if (data.decoded.userType === "CorpUser") {
+                      navigate("/business/dashboard");
+                    } else {
+                      navigate("/dashboard");
+                    }
+                  });
                 })
                 .catch((err) => {
                   console.error(err);

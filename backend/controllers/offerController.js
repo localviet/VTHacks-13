@@ -34,11 +34,11 @@ const createOffer = async (req, res) => {
       { $push: { offers: offer._id } },
       { new: true }
     );
-    await CorpUser.findByIdAndUpdate(
-      req.user._id,
-      { $push: { offers: offer._id } },
-      { new: true }
-    );
+    // await CorpUser.findByIdAndUpdate(
+    //   req.user._id,
+    //   { $push: { offers: offer._id } },
+    //   { new: true }
+    // );
   } else {
     console.log("creator user detected");
     const offer = await CreatorsOffer.create(offerData);
@@ -48,11 +48,11 @@ const createOffer = async (req, res) => {
       { $push: { offers: offer._id } },
       { new: true }
     );
-    await CreatorUser.findByIdAndUpdate(
-      req.user._id,
-      { $push: { offers: offer._id } },
-      { new: true }
-    );
+    // await CreatorUser.findByIdAndUpdate(
+    //   req.user._id,
+    //   { $push: { offers: offer._id } },
+    //   { new: true }
+    // );
   }
   return res
     .status(201)
@@ -65,6 +65,11 @@ const deleteOffer = async (req, res) => {
     console.log("corp user detected");
     const offer = await CorpsOffer.findOne({ to: to, from: req.user._id });
     console.log("offer found:", offer);
+    if (!offer) {
+      return res.status(404).json({ message: "Offer not found" });
+    }
+
+    // remove references from both users
     const blank = await CorpUser.findByIdAndUpdate(
       req.user._id,
       { $pull: { offers: offer._id } },
@@ -77,12 +82,17 @@ const deleteOffer = async (req, res) => {
       { new: true }
     );
     console.log("all updated");
-    CorpsOffer.findOneAndDelete({ to: to, from: req.user._id });
-    console.log("corpsoffer deleted");
+
+    // actually delete the offer and await the result
+    const deleted = await CorpsOffer.findByIdAndDelete(offer._id);
+    console.log("corpsOffer deleted:", deleted);
   } else {
     console.log("creator user detected");
-
     const offer = await CreatorsOffer.findOne({ to: to, from: req.user._id });
+    if (!offer) {
+      return res.status(404).json({ message: "Offer not found" });
+    }
+
     await CreatorUser.findByIdAndUpdate(
       req.user._id,
       { $pull: { offers: offer._id } },
@@ -93,7 +103,9 @@ const deleteOffer = async (req, res) => {
       { $pull: { offers: offer._id } },
       { new: true }
     );
-    CreatorsOffer.findOneAndDelete({ to: to, from: req.user._id });
+
+    const deleted = await CreatorsOffer.findByIdAndDelete(offer._id);
+    console.log("creatorsOffer deleted:", deleted);
   }
   return res.status(200).json({ message: "Offer deleted successfully" });
 };
@@ -116,20 +128,32 @@ const getReceivedOffers = async (req, res) => {
     console.log("corp user detected");
     const foundUser = await CorpUser.findById(req.user._id);
     console.log("foundUser:", foundUser);
+    if (!foundUser || !Array.isArray(foundUser.offers)) {
+      return res.status(200).json({ offers: [] });
+    }
     const OfferObjects = [];
     for (let i = 0; i < foundUser.offers.length; i++) {
-      const offer = await CreatorsOffer.findById(foundUser.offers[i]);
-      OfferObjects.push(offer);
+      const id = foundUser.offers[i];
+      // try both collections because you store mixed offer types in the same array
+      let offer = await CreatorsOffer.findById(id);
+      if (!offer) offer = await CorpsOffer.findById(id);
+      if (offer) OfferObjects.push(offer);
     }
+    console.log("OfferObjects:", OfferObjects);
     return res.status(200).json({ offers: OfferObjects });
   } else if (req.user.userType === "CreatorUser") {
     console.log("creator user detected");
     const foundUser = await CreatorUser.findById(req.user._id);
     console.log("foundUser:", foundUser);
+    if (!foundUser || !Array.isArray(foundUser.offers)) {
+      return res.status(200).json({ offers: [] });
+    }
     const OfferObjects = [];
     for (let i = 0; i < foundUser.offers.length; i++) {
-      const offer = await CorpsOffer.findById(foundUser.offers[i]);
-      OfferObjects.push(offer);
+      const id = foundUser.offers[i];
+      let offer = await CorpsOffer.findById(id);
+      if (!offer) offer = await CreatorsOffer.findById(id);
+      if (offer) OfferObjects.push(offer);
     }
     return res.status(200).json({ offers: OfferObjects });
   }

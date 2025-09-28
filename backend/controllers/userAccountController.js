@@ -40,7 +40,7 @@ const login = asyncHandler(async (req, res) => {
     user = await CorpUser.findOne({ email: email });
     userType = "CorpUser";
   }
-  console.log("User found by phone:", user);
+  console.log("User found by email:", user);
   console.log(user.password);
   if (user && (await bcrypt.compare(password, user.password))) {
     const userData = { _id: user._id, userType: userType };
@@ -92,9 +92,10 @@ const creatorUserRegister = asyncHandler(async (req, res) => {
     youtube,
     instagram,
     tiktok,
+    followers,
   } = req.body;
   console.log("in creator register with", req.body);
-  if (!firstName || !lastName || !email || !password) {
+  if (!firstName || !lastName || !email || !password || !followers) {
     return res.status(400).json({ message: "all fields are required" });
   }
   const salt = await bcrypt.genSalt(10);
@@ -105,6 +106,7 @@ const creatorUserRegister = asyncHandler(async (req, res) => {
     email: email,
     lastName: lastName,
     password: hashedPassword,
+    followers: followers,
   };
 
   if (bio) userData.bio = bio;
@@ -184,12 +186,12 @@ const refresh = asyncHandler(async (req, res) => {
 // @access  Public (adjust with auth if needed)
 const getAllUsers = asyncHandler(async (req, res) => {
   try {
-    const creators = await CreatorUser.find().select('-password');
-    const corps = await CorpUser.find().select('-password');
+    const creators = await CreatorUser.find().select("-password");
+    const corps = await CorpUser.find().select("-password");
     return res.status(200).json({ creators, corps });
   } catch (error) {
-    console.error('Error fetching users:', error);
-    return res.status(500).json({ message: 'Server error' });
+    console.error("Error fetching users:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -209,21 +211,23 @@ const getAllCreators = asyncHandler(async (req, res) => {
 const getUserById = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    if (!id) return res.status(400).json({ message: 'Missing id parameter' });
+    if (!id) return res.status(400).json({ message: "Missing id parameter" });
 
-    let user = await CreatorUser.findById(id).select('-password').populate('offers');
-    let userType = 'CreatorUser';
+    let user = await CreatorUser.findById(id)
+      .select("-password")
+      .populate("offers");
+    let userType = "CreatorUser";
     if (!user) {
-      user = await CorpUser.findById(id).select('-password').populate('offers');
-      userType = 'CorpUser';
+      user = await CorpUser.findById(id).select("-password").populate("offers");
+      userType = "CorpUser";
     }
 
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     return res.status(200).json({ user, userType });
   } catch (error) {
-    console.error('Error fetching user by id:', error);
-    return res.status(500).json({ message: 'Server error' });
+    console.error("Error fetching user by id:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -240,6 +244,24 @@ function authenticateCorpToken(req, res, next) {
     //if (user.userType != "CorpUser") return res.sendStatus(403);
     req.user = user;
     next();
+  });
+}
+function solveJWT(req, res) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null)
+    return res.status(401).json({ message: "No token provided" });
+
+  // Verify the token and return the decoded payload
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      console.log("solveJWT verify error:", err);
+      return res
+        .status(403)
+        .json({ message: "Invalid token", error: err.message });
+    }
+    // decoded contains the payload used when signing (e.g. {_id, userType, iat, exp})
+    return res.status(200).json({ decoded });
   });
 }
 // function authenticateCreatorToken(req, res, next) {
@@ -265,5 +287,6 @@ export {
   getAllUsers,
   getUserById,
   authenticateCorpToken,
+  solveJWT,
   // authenticateCreatorToken,
 };
