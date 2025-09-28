@@ -43,7 +43,7 @@ const creatorUserSchema = new mongoose.Schema(
 
     offers: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "Offer",
+      ref: "CorpsOffer",
       default: [],
     },
 

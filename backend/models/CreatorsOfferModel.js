@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
-const offerSchema = new mongoose.Schema(
+const creatorsOfferSchema = new mongoose.Schema(
   {
     to: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CreatorUser",
+      ref: "CorpUser",
       unique: true,
       required: true,
     },
     from: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CorpUser",
+      ref: "CreatorUser",
       unique: true,
       required: true,
     },
@@ -26,4 +26,4 @@ const offerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Offer", offerSchema);
+export default mongoose.model("CreatorsOffer", creatorsOfferSchema);

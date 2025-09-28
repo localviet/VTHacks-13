@@ -30,12 +30,7 @@ function App() {
           <Route path="/business/signup" element={<BusinessSignUp />} />
           <Route path="business/dashboard" element={<DashboardBusiness />} />
           <Route path="business/search" element={<BusinessSearch />} />
-<<<<<<< HEAD
-          <Route path="business/settings" element={<BusinessSettings />} />
-
-=======
           <Route path="business/setting" element={<BusinessSettings />} />
->>>>>>> 926002ef34ad6511ecfbe0e985fad848ae3610b5
         </Routes>
       </Router>
     </>
