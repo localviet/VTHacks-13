@@ -25,7 +25,8 @@ export default function IgniteDashboard() {
         },
       })
       .then((res) => {
-        setOffers(res.data?.offers || []);
+        console.log("Fetched offers:", res.data);
+        setOffers(res.data ? res.data.offers : []);
       })
       .catch((error) => {
         console.error("Error fetching offers:", error);
@@ -37,8 +38,7 @@ export default function IgniteDashboard() {
       setLoadingOffers(true);
       setErrorOffers("");
 
-      const token =
-        localStorage.getItem("token") || localStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
 
       const res = await axios.get(
         `${
@@ -171,7 +171,6 @@ export default function IgniteDashboard() {
                     key={index}
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    {console.log("offer:", offer)}
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
                         <span className="text-white font-bold text-sm">

@@ -40,7 +40,7 @@ const login = asyncHandler(async (req, res) => {
     user = await CorpUser.findOne({ email: email });
     userType = "CorpUser";
   }
-  console.log("User found by phone:", user);
+  console.log("User found by email:", user);
   console.log(user.password);
   if (user && (await bcrypt.compare(password, user.password))) {
     const userData = { _id: user._id, userType: userType };
@@ -194,6 +194,24 @@ function authenticateCorpToken(req, res, next) {
     next();
   });
 }
+function solveJWT(req, res) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null)
+    return res.status(401).json({ message: "No token provided" });
+
+  // Verify the token and return the decoded payload
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      console.log("solveJWT verify error:", err);
+      return res
+        .status(403)
+        .json({ message: "Invalid token", error: err.message });
+    }
+    // decoded contains the payload used when signing (e.g. {_id, userType, iat, exp})
+    return res.status(200).json({ decoded });
+  });
+}
 // function authenticateCreatorToken(req, res, next) {
 //   const authHeader = req.headers["authorization"];
 //   const token = authHeader && authHeader.split(" ")[1];
@@ -214,5 +232,6 @@ export {
   corpUserRegister,
   refresh,
   authenticateCorpToken,
+  solveJWT,
   // authenticateCreatorToken,
 };

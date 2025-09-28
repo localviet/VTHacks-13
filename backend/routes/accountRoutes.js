@@ -4,6 +4,7 @@ import {
   refresh,
   creatorUserRegister,
   corpUserRegister,
+  solveJWT,
 } from "../controllers/userAccountController.js";
 const apiRouter = express.Router();
 
@@ -13,4 +14,5 @@ apiRouter.get("/login", login);
 apiRouter.post("/register/creator", creatorUserRegister);
 apiRouter.post("/register/corp", corpUserRegister);
 apiRouter.get("/refresh", refresh);
+apiRouter.get("/solveJWT", solveJWT);
 export default apiRouter;
