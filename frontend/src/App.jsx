@@ -14,6 +14,7 @@ import DashboardBusiness from "./pages/Business/DashboardBusiness.jsx";
 import BusinessSignUp from "./pages/Business/BusinessSignUp.jsx";
 import BusinessSearch from "./pages/Business/BusinessSearch.jsx";
 import BusinessSettings from "./pages/Business/BusinessSettings.jsx";
+import UserView from "./pages/Business/UserView.jsx";
 
 import "./App.css";
 
@@ -33,6 +34,9 @@ function App() {
           <Route path="business/search" element={<BusinessSearch />} />
           <Route path="business/settings" element={<BusinessSettings />} />
           <Route path="/view/:id" element={<View />} />
+          {/* User profile view (dynamic) */}
+          <Route path="/user/:id" element={<UserView />} />
+          <Route path="business/UserView/:id" element={<UserView />} />
         </Routes>
       </Router>
     </>
