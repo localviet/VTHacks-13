@@ -8,16 +8,26 @@ User-generated content is the most effective form of modern marketing—customer
 ### Backend
 1. cd into the backend folder.
 2. create a .env file. Add these variables:
-  a. MONGO_URI (create a mongodb database and add the link to it here)
-  b. PORT (any 4 digit number)
-  c. ACCESS_TOKEN_SECRET (generate 64 bit hex key with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))")
-  d. REFRESH_TOKEN_SECRET (use the same method to create another key)
-3. `npm i` to install dependencies
-4. npm run dev to locally host backend server.
+```
+MONGO_URI = <Your mongodb URI here>
+PORT = <any 4 digit number>
+ACCESS_TOKEN_SECRET = <(generate 64 bit hex key with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))")>
+REFRESH_TOKEN_SECRET = <(use the same method to create another key)>
+```
+4. `npm i` to install dependencies
+5. to locally host backend server.
+```
+npm run dev 
+```
 ### Frontend
 1. cd into the frontend folder.
 2. create a .env file. add this variable:
-   a. VITE_API_URL (http link to backend)
-3. `npm i` to install dependencies
-4. npm run dev to locally host frontend server.
+```
+VITE_API_URL = <http link to backend>
+```
+4. `npm i` to install dependencies
+5. To locally host frontend server:
+```
+npm run dev
+```
 
