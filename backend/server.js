@@ -3,6 +3,7 @@ import express, { Router } from "express";
 import dotenv from "dotenv";
 import apiRouter from "./routes/accountRoutes.js";
 import offerRouter from "./routes/offerRoutes.js";
+import jobListingRouter from "./routes/jobListingRoutes.js";
 import cors from "cors";
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.json()); //to be able to send json data
 
 app.use("/api/", apiRouter);
 app.use("/offer/", offerRouter);
+app.use("/job-listing/", jobListingRouter);
 // connect to db
 connectDB().then(() => {
   app.listen(PORT, () => {
