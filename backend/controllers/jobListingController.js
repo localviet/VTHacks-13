@@ -54,6 +54,20 @@ const getAllJobListings = async (req, res) => {
   }
 };
 
+const getJobListingById = async (req, res) => {
+  const { id } = req.params;
+  let jobListing;
+  try {
+    jobListing = await JobListing.findById(id);
+  } catch (error) {
+    console.error("Error fetching job listing by ID:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+  if (!jobListing) {
+    return res.status(404).json({ message: "Job listing not found" });
+  }
+  res.status(200).json({ jobListing });
+};
 //jobListingRouter.get("/all-job-listings", getAllJobListings);
 //jobListingRouter.get("/job-listing/:id", getJobListingById);
-export { createJobListing, getAllJobListings };
+export { createJobListing, getAllJobListings, getJobListingById };

@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import {
   createJobListing,
   getAllJobListings,
-  //getJobListingById,
+  getJobListingById,
   //updateJobListing,
   //deleteJobListing,
 } from "../controllers/jobListingController.js";
@@ -16,5 +16,5 @@ jobListingRouter.post(
   createJobListing
 );
 jobListingRouter.get("/all-job-listings", getAllJobListings);
-//jobListingRouter.get("/job-listing/:id", getJobListingById);
+jobListingRouter.get("/job-listing/:id", getJobListingById);
 export default jobListingRouter;
