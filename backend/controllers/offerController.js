@@ -1,4 +1,5 @@
 import CorpsOffer from "../models/CorpsOfferModel.js";
+import CreatorsOffer from "../models/CreatorsOfferModel.js";
 import CreatorUser from "../models/CreatorUserModel.js";
 import CorpUser from "../models/CorpUserModel.js";
 const createCorpsOffer = async (req, res) => {
@@ -60,4 +61,28 @@ const changeOfferStatus = async (req, res) => {
     .status(200)
     .json({ message: "Offer status updated", offer: offer });
 };
-export { createCorpsOffer, deleteOffer, changeOfferStatus };
+
+const getReceivedOffers = async (req, res) => {
+  console.log("Getting received offers for user:", req.user);
+  if (req.user.userType === "CorpUser") {
+    console.log("corp user detected");
+    const offers = await CorpUser.findById(req.user._id);
+    console.log("offers:", offers);
+    const OfferObjects = [];
+    for (let i = 0; i < offers.offers.length; i++) {
+      const offer = await CreatorsOffer.findById(offers.offers[i]);
+      OfferObjects.push(offer);
+    }
+    return res.status(200).json({ offers: OfferObjects });
+  } else if (req.user.userType === "CreatorUser") {
+    const offers = await CreatorUser.findById(req.user._id);
+
+    const OfferObjects = [];
+    for (let i = 0; i < offers.offers.length; i++) {
+      const offer = await CorpsOffer.findById(offers.offers[i]);
+      OfferObjects.push(offer);
+    }
+    return res.status(200).json({ offers: OfferObjects });
+  }
+};
+export { createCorpsOffer, deleteOffer, changeOfferStatus, getReceivedOffers };
