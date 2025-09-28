@@ -28,6 +28,11 @@ const CompanySchema = new mongoose.Schema(
       ref: "CorpsOffer",
       default: [],
     },
+    jobListings: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "JobListing",
+      default: [],
+    },
     pfpUrl: {
       type: String,
       default: "",

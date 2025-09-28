@@ -1,71 +1,77 @@
-import { 
-  Settings, 
-  Search,
-  TrendingUp,
-  Home
-    ,LogOut
-} from "lucide-react";
+import { Settings, Search, TrendingUp, Home, LogOut } from "lucide-react";
+import { use } from "react";
 import { Link } from "react-router-dom";
 
-const sidebar = ({sidebarOpen, setSidebarOpen}) => {
+const logout = () => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  window.location.href = "/";
+};
+
+const sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   return (
     <div>
-        <div 
+      <div
         className={`fixed left-0 top-0 h-full bg-white shadow-xl transition-all duration-300 ease-in-out z-50 ${
           sidebarOpen ? "w-64" : "w-16"
         }`}
         onMouseEnter={() => setSidebarOpen(true)}
         onMouseLeave={() => setSidebarOpen(false)}
-        >
-            <div className="p-4">
-            <div className="flex items-center gap-3 mb-8">
-                <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-white" />
-                </div>
-                    {sidebarOpen && (
-                    <h1 className="text-xl font-bold text-gray-800 whitespace-nowrap">
-                        <span className="mr-1">Ignite |</span>
-                        <span className="text-blue-600 font-bold">Business</span>
-                    </h1>
-                    )}
+      >
+        <div className="p-4">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-white" />
             </div>
+            {sidebarOpen && (
+              <h1 className="text-xl font-bold text-gray-800 whitespace-nowrap">
+                <span className="mr-1">Ignite |</span>
+                <span className="text-blue-600 font-bold">Business</span>
+              </h1>
+            )}
+          </div>
 
-            <nav className="space-y-2">
-                <Link
-                    to="/business/dashboard"
-                    className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 mb-5`}
-                >
-                    <Home className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
-                    {sidebarOpen && <span className="font-medium">Dashboard </span>}
-
-                </Link>
-                <Link
-                    to="/business/search"
-                    className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 mb-5`}
-                >
-                    <Search className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
-                    {sidebarOpen && <span className="font-medium">Search</span>}
-                </Link>
-                <Link
-                    to="/business/settings"
-                    className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50`}
-                >
-                    <Settings className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
-                    {sidebarOpen && <span className="font-medium">Settings</span>}
-                </Link>
-                {/* Logout button (not a link) */}
-                <button
-                    onClick={() => console.log('Business Logout clicked')}
-                    className={`w-full text-left flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 mt-4 px-0 py-2`}
-                >
-                    <LogOut className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} color="red" />
-                    {sidebarOpen && <span className="font-medium">Logout</span>}
-                </button>
-            </nav>
-            </div>
+          <nav className="space-y-2">
+            <Link
+              to="/business/dashboard"
+              className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 mb-5`}
+            >
+              <Home className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
+              {sidebarOpen && <span className="font-medium">Dashboard </span>}
+            </Link>
+            <Link
+              to="/business/search"
+              className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 mb-5`}
+            >
+              <Search className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
+              {sidebarOpen && <span className="font-medium">Search</span>}
+            </Link>
+            <Link
+              to="/business/settings"
+              className={`flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50`}
+            >
+              <Settings className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`} />
+              {sidebarOpen && <span className="font-medium">Settings</span>}
+            </Link>
+            {/* Logout button (not a link) */}
+            <button
+              onClick={() => {
+                console.log("Business Logout clicked");
+                logout();
+              }}
+              className={`w-full text-left flex items-center gap-3 rounded-lg cursor-pointer transition-colors text-gray-600 hover:bg-gray-50 mt-4 px-0 py-2`}
+            >
+              <LogOut
+                className={`${sidebarOpen ? "w-5 h-5" : "w-7 h-7"}`}
+                color="red"
+              />
+              {sidebarOpen && <span className="font-medium">Logout</span>}
+            </button>
+          </nav>
         </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default sidebar
+export default sidebar;

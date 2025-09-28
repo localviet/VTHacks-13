@@ -31,8 +31,8 @@ function App() {
           <Route path="/business/signup" element={<BusinessSignUp />} />
           <Route path="business/dashboard" element={<DashboardBusiness />} />
           <Route path="business/search" element={<BusinessSearch />} />
-          <Route path="business/setting" element={<BusinessSettings />} />
-          <Route path="/view" element={<View />} />
+          <Route path="business/settings" element={<BusinessSettings />} />
+          <Route path="/view/:id" element={<View />} />
         </Routes>
       </Router>
     </>

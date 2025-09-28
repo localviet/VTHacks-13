@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { 
   Settings, 
   Search,
@@ -20,89 +21,46 @@ export default function IgniteForYouPage() {
 
   const filters = ["All", "Tech", "Fashion", "Beauty", "Food", "Travel", "Fitness"];
 
-  const companies = [
-    {
-      id: 1,
-      name: "TechFlow",
-      logo: "T",
-      product: "AI-powered productivity app",
-      description: "Looking for tech reviewers to showcase our new AI assistant. Perfect for creators who focus on productivity and tech innovations.",
-      budget: "$2,500 - $5,000",
-      deadline: "Dec 20",
-      followers: "10K+",
-      tags: ["tech", "ai", "productivity"],
-      color: "from-blue-500 to-cyan-500"
-    },
-    {
-      id: 2,
-      name: "StyleVibe",
-      logo: "S",
-      product: "Sustainable fashion line",
-      description: "Seeking fashion influencers to create styling videos with our eco-friendly clothing collection. Focus on sustainable fashion trends.",
-      budget: "$1,800 - $3,200",
-      deadline: "Jan 5",
-      followers: "50K+",
-      tags: ["fashion", "sustainable", "lifestyle"],
-      color: "from-pink-500 to-rose-500"
-    },
-    {
-      id: 3,
-      name: "GlowUp",
-      logo: "G",
-      product: "Premium skincare products",
-      description: "Looking for beauty creators to demonstrate our new anti-aging serum. Perfect for morning/evening routine content.",
-      budget: "$3,000 - $6,000",
-      deadline: "Dec 15",
-      followers: "25K+",
-      tags: ["beauty", "skincare", "wellness"],
-      color: "from-purple-500 to-indigo-500"
-    },
-    {
-      id: 4,
-      name: "FitCore",
-      logo: "F",
-      product: "Smart fitness equipment",
-      description: "Seeking fitness influencers to create workout videos using our smart home gym equipment. Focus on home workouts and health.",
-      budget: "$4,000 - $8,000",
-      deadline: "Jan 10",
-      followers: "100K+",
-      tags: ["fitness", "health", "tech"],
-      color: "from-green-500 to-emerald-500"
-    },
-    {
-      id: 5,
-      name: "TasteLocal",
-      logo: "T",
-      product: "Artisanal food products",
-      description: "Looking for food content creators to feature our local artisanal products in cooking videos and taste tests.",
-      budget: "$1,500 - $2,800",
-      deadline: "Dec 25",
-      followers: "20K+",
-      tags: ["food", "cooking", "local"],
-      color: "from-orange-500 to-red-500"
-    },
-    {
-      id: 6,
-      name: "WanderLux",
-      logo: "W",
-      product: "Luxury travel experiences",
-      description: "Seeking travel influencers to showcase our premium travel packages. Create engaging destination content and travel vlogs.",
-      budget: "$5,000 - $10,000",
-      deadline: "Feb 1",
-      followers: "75K+",
-      tags: ["travel", "luxury", "lifestyle"],
-      color: "from-teal-500 to-blue-500"
-    }
-  ];
+  const [jobs, setJobs] = useState([]);
+  const [loadingJobs, setLoadingJobs] = useState(true);
+  const [jobsError, setJobsError] = useState(null);
 
-  const filteredCompanies = companies.filter(company => {
-    const matchesSearch = company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         company.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         company.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+  useEffect(() => {
+    let mounted = true;
+    const fetchJobs = async () => {
+      setLoadingJobs(true);
+      setJobsError(null);
+      try {
+        const res = await fetch('http://localhost:5001/job-listing/all-job-listings');
+        if (!res.ok) throw new Error(`Server responded ${res.status}`);
+  const data = await res.json();
+  // Expecting an array; backend may return { jobListings: [...] }
+  const list = Array.isArray(data) ? data : (data.jobs || data.jobListings || []);
+  if (mounted) setJobs(list);
+      } catch (err) {
+        console.error('Failed to fetch jobs:', err);
+        if (mounted) setJobsError(err.message || 'Failed to fetch');
+      } finally {
+        if (mounted) setLoadingJobs(false);
+      }
+    };
+    fetchJobs();
+    return () => { mounted = false; };
+  }, []);
+
+  const filteredJobs = (jobs || []).filter(job => {
+    const companyName = (job.company && job.company.name) || job.name || job.title || '';
+    const name = String(companyName).toLowerCase();
+    const desc = String(job.description || job.desc || job.product || job.title || '').toLowerCase();
+    const jobTags = (job.tags || []).map(t => String(t).toLowerCase());
+
+    const matchesSearch = name.includes(searchTerm.toLowerCase()) ||
+                         desc.includes(searchTerm.toLowerCase()) ||
+                         jobTags.some(tag => tag.includes(searchTerm.toLowerCase()));
+
     const matchesFilter = selectedFilter === "All" || 
-                         company.tags.some(tag => tag.toLowerCase().includes(selectedFilter.toLowerCase()));
-    
+                         jobTags.some(tag => tag.includes(selectedFilter.toLowerCase()));
+
     return matchesSearch && matchesFilter;
   });
 
@@ -154,64 +112,62 @@ export default function IgniteForYouPage() {
 
         {/* Companies List */}
         <main className="p-6">
-          <div className="space-y-6">
-            {filteredCompanies.map((company) => (
-              <div key={company.id} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  {/* Company Logo */}
-                  <div className={`w-16 h-16 bg-gradient-to-r ${company.color} rounded-xl flex items-center justify-center flex-shrink-0`}>
-                    <span className="text-white font-bold text-xl">{company.logo}</span>
-                  </div>
-
-                  {/* Company Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900">{company.name}</h3>
-                        <p className="text-gray-600 font-medium">{company.product}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-green-600">{company.budget}</p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            <span>{company.deadline}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Users className="w-4 h-4" />
-                            <span>{company.followers}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {loadingJobs ? (
+              <div className="col-span-full text-center py-12">Loading jobs...</div>
+            ) : jobsError ? (
+              <div className="col-span-full text-center py-12 text-red-600">Failed to load jobs: {jobsError}</div>
+            ) : (
+              filteredJobs.map((job) => (
+                <Link to={`/view/${job.id || job._id}`} key={job.id || job._id} className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow flex flex-col h-full">
+                  <div className="flex items-start gap-4">
+                    {/* Logo / color square */}
+                    <div className={`w-16 h-16 bg-gradient-to-r ${job.color || 'from-gray-400 to-gray-500'} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                      <span className="text-white font-bold text-xl">{(job.company && job.company.name && job.company.name.charAt(0)) || job.logo || (job.name || job.title || '').charAt(0)}</span>
+                    </div>
+                    {/* Job Info */}
+                    <div className="flex-1 min-w-0 flex flex-col">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-900">{(job.company && job.company.name) || job.name || job.title}</h3>
+                          <p className="text-gray-600 font-medium">{job.title || job.product || job.subtitle || ''}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-green-600">{job.budget || (Array.isArray(job.salaryRange) && job.salaryRange.length ? `$${job.salaryRange[0]} - $${job.salaryRange[1]}` : job.salary || '')}</p>
+                          <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              <span>{job.deadline || ''}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Users className="w-4 h-4" />
+                              <span>{job.followers || ''}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <p className="text-gray-700 mb-4 leading-relaxed">{company.description}</p>
+                      <p className="text-gray-700 mb-4 leading-relaxed">{job.description || job.product || ''}</p>
 
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {company.tags.map((tag, index) => (
-                        <span 
-                          key={index}
-                          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Action Button */}
-                    <div className="mt-4 flex justify-end">
-                      <button className="bg-red-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors">
-                        Apply Now
-                      </button>
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2">
+                        {(job.tags || []).map((tag, index) => (
+                          <span 
+                            key={index}
+                            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                </Link>
+              ))
+            )}
           </div>
 
-          {filteredCompanies.length === 0 && (
+          {filteredJobs.length === 0 && (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">No companies found matching your criteria.</p>
               <p className="text-gray-400">Try adjusting your search or filters.</p>
