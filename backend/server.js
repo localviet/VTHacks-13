@@ -3,12 +3,13 @@ import express, { Router } from "express";
 import dotenv from "dotenv";
 import apiRouter from "./routes/accountRoutes.js";
 import offerRouter from "./routes/offerRoutes.js";
+import cors from "cors";
 dotenv.config();
 
 //express app
 const app = express();
 const PORT = process.env.PORT || 5001;
-
+app.use(cors());
 //middleware
 app.use(express.json()); //to be able to send json data
 

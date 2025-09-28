@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import RotatingText from '../components/RotatingText.jsx';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from "react";
+import RotatingText from "../components/RotatingText.jsx";
+import { Link } from "react-router-dom";
 
 // --- Icon Components (using SVG for portability) ---
 const SproutIcon = ({ className }) => (
@@ -61,35 +61,44 @@ const ZapIcon = ({ className }) => (
 );
 
 const TrendingUpIcon = ({ className }) => (
-    <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        width="24" 
-        height="24" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        className={className}
-    >
-        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-        <polyline points="16 7 22 7 22 13"/>
-    </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+    <polyline points="16 7 22 7 22 13" />
+  </svg>
 );
-
 
 // --- Main App Component ---
 export default function App() {
+  const isLoggedIn = !!localStorage.getItem("accessToken");
   const [isScrolled, setIsScrolled] = useState(false);
-  const words = ["Content", "Brand", "Agency", "Store", "Business", "Product", "Service", "Experience"];
+  const words = [
+    "Content",
+    "Brand",
+    "Agency",
+    "Store",
+    "Business",
+    "Product",
+    "Service",
+    "Experience",
+  ];
   // Effect for Navbar background change on scroll
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Effect for fade-in animations on scroll
@@ -98,7 +107,7 @@ export default function App() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-visible');
+            entry.target.classList.add("fade-in-visible");
             observer.unobserve(entry.target);
           }
         });
@@ -106,7 +115,7 @@ export default function App() {
       { threshold: 0.1 }
     );
 
-    const elements = document.querySelectorAll('.fade-in');
+    const elements = document.querySelectorAll(".fade-in");
     elements.forEach((el) => observer.observe(el));
 
     return () => elements.forEach((el) => observer.unobserve(el));
@@ -152,15 +161,42 @@ export default function App() {
       `}</style>
 
       {/* --- Header --- */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-sm shadow-sm' : 'bg-transparent'}`}>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/80 backdrop-blur-sm shadow-sm"
+            : "bg-transparent"
+        }`}
+      >
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <SproutIcon className="w-7 h-7 text-red-500" />
             <span className="text-2xl font-bold text-gray-900">Ignite</span>
           </div>
           <nav className="flex items-center space-x-4">
-            <Link to="/signin" className="text-gray-600 hover:text-black transition-colors">Sign In</Link>
-            <Link to="/signup" className="bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition-all">Sign Up</Link>
+            {!isLoggedIn ? (
+              <>
+                <Link
+                  to="/signin"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition-all"
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <Link
+                to="/Dashboard"
+                className="text-gray-600 hover:text-black transition-colors"
+              >
+                Dashboard
+              </Link>
+            )}
           </nav>
         </div>
       </header>
@@ -168,30 +204,37 @@ export default function App() {
       <main>
         {/* --- Hero Section --- */}
         <section className="min-h-screen flex flex-col justify-center items-center text-center relative overflow-hidden">
-            <video 
-              autoPlay 
-              loop 
-              muted 
-              className="absolute z-0 w-full h-full object-cover"
-            >
-              <source src="https://videos.pexels.com/video-files/853875/853875-hd_1920_1080_25fps.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <div className="absolute inset-0 hero-glow rounded-full w-1/2 h-1/2 m-auto blur-3xl opacity-50"></div>
-            <div className="relative z-10 flex flex-col items-center">
-                <div className="mb-6 subtle-pulse">
-                    <SproutIcon className="w-24 h-24 text-red-500" />
-                </div>
-                <h1 className="text-5xl md:text-9xl font-bold tracking-tight pb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-500 to-orange-500 animated-gradient">
-                    Ignite Your Content
-                </h1>
-                <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto">
-                    The ultimate platform connecting authentic creators with innovative brands.
-                </p>
-                <Link to="/signup" className="mt-8 bg-red-500 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-red-600 transition-all transform hover:scale-105">
-                    Get Started
-                </Link>
+          <video
+            autoPlay
+            loop
+            muted
+            className="absolute z-0 w-full h-full object-cover"
+          >
+            <source
+              src="https://videos.pexels.com/video-files/853875/853875-hd_1920_1080_25fps.mp4"
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute inset-0 hero-glow rounded-full w-1/2 h-1/2 m-auto blur-3xl opacity-50"></div>
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="mb-6 subtle-pulse">
+              <SproutIcon className="w-24 h-24 text-red-500" />
             </div>
+            <h1 className="text-5xl md:text-9xl font-bold tracking-tight pb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-500 to-orange-500 animated-gradient">
+              Ignite Your Content
+            </h1>
+            <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto">
+              The ultimate platform connecting authentic creators with
+              innovative brands.
+            </p>
+            <Link
+              to="/signup"
+              className="mt-8 bg-red-500 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-red-600 transition-all transform hover:scale-105"
+            >
+              Get Started
+            </Link>
+          </div>
         </section>
 
         {/* --- Slogan Section --- */}
@@ -207,9 +250,12 @@ export default function App() {
         <section className="py-20 md:py-28 bg-gray-50/70">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
-              <h3 className="fade-in text-4xl font-bold tracking-tight">How It Works</h3>
+              <h3 className="fade-in text-4xl font-bold tracking-tight">
+                How It Works
+              </h3>
               <p className="fade-in delay-1 text-lg text-gray-500 mt-2 max-w-2xl mx-auto">
-                We make authentic collaboration seamless and powerful for everyone involved.
+                We make authentic collaboration seamless and powerful for
+                everyone involved.
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-10">
@@ -218,9 +264,12 @@ export default function App() {
                 <div className="bg-emerald-100 text-emerald-600 w-12 h-12 rounded-lg flex items-center justify-center mb-5">
                   <UsersIcon className="w-6 h-6" />
                 </div>
-                <h4 className="text-xl font-semibold mb-2">Match with Brands</h4>
+                <h4 className="text-xl font-semibold mb-2">
+                  Match with Brands
+                </h4>
                 <p className="text-gray-500">
-                  Our smart algorithm connects you with brands that align with your voice and values, ensuring authentic partnerships.
+                  Our smart algorithm connects you with brands that align with
+                  your voice and values, ensuring authentic partnerships.
                 </p>
               </div>
               {/* Feature 2 */}
@@ -230,7 +279,8 @@ export default function App() {
                 </div>
                 <h4 className="text-xl font-semibold mb-2">Launch Campaigns</h4>
                 <p className="text-gray-500">
-                  Brands can effortlessly launch UGC campaigns, set goals, and manage creator submissions all in one place.
+                  Brands can effortlessly launch UGC campaigns, set goals, and
+                  manage creator submissions all in one place.
                 </p>
               </div>
               {/* Feature 3 */}
@@ -240,7 +290,8 @@ export default function App() {
                 </div>
                 <h4 className="text-xl font-semibold mb-2">Track & Grow</h4>
                 <p className="text-gray-500">
-                  Access real-time analytics to track campaign performance and measure the impact of your creator collaborations.
+                  Access real-time analytics to track campaign performance and
+                  measure the impact of your creator collaborations.
                 </p>
               </div>
             </div>
@@ -249,30 +300,29 @@ export default function App() {
 
         {/* --- CTA Section --- */}
         <section className="py-20 md:py-32">
-            <div className="container mx-auto px-6 text-center">
-                <div className="fade-in max-w-3xl mx-auto">
-                    <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Ready to Ignite?</h2>
-                    <p className="text-lg text-gray-500 mt-4 mb-8">
-                        Join the community of forward-thinking brands and creators today.
-                        Signing up is free and takes less than a minute.
-                    </p>
-                    <button className="bg-black text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-800 transition-all transform hover:scale-105">
-                        Start Your Journey
-                    </button>
-                </div>
+          <div className="container mx-auto px-6 text-center">
+            <div className="fade-in max-w-3xl mx-auto">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+                Ready to Ignite?
+              </h2>
+              <p className="text-lg text-gray-500 mt-4 mb-8">
+                Join the community of forward-thinking brands and creators
+                today. Signing up is free and takes less than a minute.
+              </p>
+              <button className="bg-black text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-800 transition-all transform hover:scale-105">
+                Start Your Journey
+              </button>
             </div>
+          </div>
         </section>
-
       </main>
 
       {/* --- Footer --- */}
       <footer className="bg-gray-50 border-t">
         <div className="container mx-auto px-6 py-8 text-center text-gray-500">
-            <p>&copy; {new Date().getFullYear()} Ignite. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Ignite. All rights reserved.</p>
         </div>
       </footer>
     </div>
   );
 }
-
-

@@ -1,10 +1,10 @@
 // src/pages/SignUpPage.jsx
 
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Lock, User, Sprout } from 'lucide-react';
-import { ChevronDown } from 'lucide-react';
-
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Mail, Lock, User, Sprout } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import axios from "axios";
 const SignUpPage = () => {
   // State to manage the header's appearance on scroll
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,43 +14,63 @@ const SignUpPage = () => {
   const platforms = ["Instagram", "TikTok", "YouTube"];
   // Form state
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    username: '',
-    videolinks: {}
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    username: "",
+    videolinks: {},
   });
   const [step, setStep] = useState(1); // step 1 = basic info, step 2 = follow-ups
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   // Effect to add and clean up the scroll event listener
+  const formSubmit = () => {
+    console.log(formData);
+  };
   useEffect(() => {
     const handleScroll = () => {
       // Set isScrolled to true if user has scrolled more than 10px
       setIsScrolled(window.scrollY > 10);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     // Cleanup function to remove the event listener
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* --- Header --- */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-sm shadow-sm' : 'bg-transparent'}`}>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/80 backdrop-blur-sm shadow-sm"
+            : "bg-transparent"
+        }`}
+      >
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <Sprout className="w-7 h-7 text-red-500" />
             <span className="text-2xl font-bold text-gray-900">Ignite</span>
           </Link>
           <nav className="flex items-center space-x-4">
-            <Link to="/signin" className="text-gray-600 hover:text-black transition-colors">Sign In</Link>
-            <Link to="/signup" className="bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition-all">Sign Up</Link>
+            <Link
+              to="/signin"
+              className="text-gray-600 hover:text-black transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/signup"
+              className="bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition-all"
+            >
+              Sign Up
+            </Link>
           </nav>
         </div>
       </header>
@@ -60,36 +80,73 @@ const SignUpPage = () => {
         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
           {/* Form Header */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Create Your Account</h1>
-            <p className="mt-2 text-gray-600">Join Ignite to spark your next big idea.</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Create Your Account
+            </h1>
+            <p className="mt-2 text-gray-600">
+              Join Ignite to spark your next big idea.
+            </p>
           </div>
 
           {/* Form */}
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form
+            className="space-y-6"
+            onSubmit={(e) => {
+              e.preventDefault();
+              formSubmit();
+            }}
+          >
             {step === 1 && (
               <>
                 {/* Full Name Input */}
                 <div>
-                  <label htmlFor="fullName" className="sr-only">Full Name</label>
+                  <label htmlFor="firstName" className="sr-only">
+                    First Name
+                  </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                     <input
-                      id="fullName"
-                      name="fullName"
+                      id="firstName"
+                      name="firstName"
                       type="text"
-                      autoComplete="name"
+                      autoComplete="first name"
                       required
-                      value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      value={formData.firstName}
+                      onChange={(e) =>
+                        setFormData({ ...formData, firstName: e.target.value })
+                      }
                       className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-                      placeholder="Full Name"
+                      placeholder="First Name"
                     />
                   </div>
                 </div>
-
+                {/*input last name*/}
+                <div>
+                  <label htmlFor="lastName" className="sr-only">
+                    Last Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                    <input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      autoComplete="name"
+                      required
+                      value={formData.lastName}
+                      onChange={(e) =>
+                        setFormData({ ...formData, lastName: e.target.value })
+                      }
+                      className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                      placeholder="Last Name"
+                    />
+                  </div>
+                </div>
                 {/* Email Input */}
                 <div>
-                  <label htmlFor="email" className="sr-only">Email address</label>
+                  <label htmlFor="email" className="sr-only">
+                    Email address
+                  </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                     <input
@@ -99,7 +156,9 @@ const SignUpPage = () => {
                       autoComplete="email"
                       required
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                       placeholder="Email address"
                     />
@@ -108,7 +167,9 @@ const SignUpPage = () => {
 
                 {/* Password Input */}
                 <div>
-                  <label htmlFor="password" className="sr-only">Password</label>
+                  <label htmlFor="password" className="sr-only">
+                    Password
+                  </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                     <input
@@ -118,7 +179,9 @@ const SignUpPage = () => {
                       autoComplete="new-password"
                       required
                       value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
                       className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                       placeholder="Password"
                     />
@@ -144,7 +207,10 @@ const SignUpPage = () => {
                             <button
                               key={p}
                               type="button"
-                              onClick={() => { setPlatform(p); setOpen(false); }}
+                              onClick={() => {
+                                setPlatform(p);
+                                setOpen(false);
+                              }}
                               className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
                             >
                               {p}
@@ -155,12 +221,16 @@ const SignUpPage = () => {
                     </div>
 
                     <div className="relative flex-1">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">@</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        @
+                      </span>
                       <input
                         id="username"
                         name="username"
                         value={formData.username}
-                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, username: e.target.value })
+                        }
                         className="w-full rounded-lg border border-gray-300 py-2.5 pl-8 pr-4 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                         placeholder="username"
                       />
@@ -174,8 +244,13 @@ const SignUpPage = () => {
                   onClick={() => {
                     setError(null);
                     // basic validation example
-                    if (!formData.fullName || !formData.email || !formData.password) {
-                      setError('Please fill in name, email and password.');
+                    if (
+                      !formData.firstName ||
+                      !formData.lastName ||
+                      !formData.email ||
+                      !formData.password
+                    ) {
+                      setError("Please fill in name, email and password.");
                       return;
                     }
                     setStep(2);
@@ -191,37 +266,58 @@ const SignUpPage = () => {
               <>
                 {/* Follow-up: three video link inputs for Instagram, TikTok, YouTube */}
                 <div>
-                  <label htmlFor="igLink" className="block text-sm font-medium text-gray-700 mb-2">Video link</label>
+                  <label
+                    htmlFor="igLink"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Video link
+                  </label>
                   <input
                     id="igLink"
                     type="url"
                     placeholder="https://www.instagram.com/..."
                     value={formData.igLink}
-                    onChange={(e) => setFormData({ ...formData, igLink: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, igLink: e.target.value })
+                    }
                     className="w-full rounded-lg border border-gray-300 py-2.5 px-3 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="tiktokLink" className="block text-sm font-medium text-gray-700 mb-2">Video link</label>
+                  <label
+                    htmlFor="tiktokLink"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Video link
+                  </label>
                   <input
                     id="tiktokLink"
                     type="url"
                     placeholder="https://www.tiktok.com/..."
                     value={formData.tiktokLink}
-                    onChange={(e) => setFormData({ ...formData, tiktokLink: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, tiktokLink: e.target.value })
+                    }
                     className="w-full rounded-lg border border-gray-300 py-2.5 px-3 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="ytLink" className="block text-sm font-medium text-gray-700 mb-2">Video link</label>
+                  <label
+                    htmlFor="ytLink"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Video link
+                  </label>
                   <input
                     id="ytLink"
                     type="url"
                     placeholder="https://www.youtube.com/watch?v=..."
                     value={formData.ytLink}
-                    onChange={(e) => setFormData({ ...formData, ytLink: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, ytLink: e.target.value })
+                    }
                     className="w-full rounded-lg border border-gray-300 py-2.5 px-3 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                   />
                 </div>
@@ -240,64 +336,93 @@ const SignUpPage = () => {
                     onClick={async () => {
                       setError(null);
                       setLoading(true);
-                      try {
-                        // Merge the three link inputs into videolinks object on submit
-                        const mergedVideoLinks = {
-                          ...(formData.videolinks || {}),
-                          instagram: formData.igLink || '',
-                          tiktok: formData.tiktokLink || '',
-                          youtube: formData.ytLink || '',
-                        };
 
-                        // Update local formData so UI state reflects merged videolinks
-                        setFormData((prev) => ({ ...prev, videolinks: mergedVideoLinks }));
+                      // Merge the three link inputs into videolinks object on submit
+                      const mergedVideoLinks = {
+                        ...(formData.videolinks || {}),
+                        instagram: formData.igLink || "",
+                        tiktok: formData.tiktokLink || "",
+                        youtube: formData.ytLink || "",
+                      };
 
-                        const payload = { ...formData, videolinks: mergedVideoLinks };
+                      // Update local formData so UI state reflects merged videolinks
+                      setFormData((prev) => ({
+                        ...prev,
+                        videolinks: mergedVideoLinks,
+                      }));
 
-                        // Example backend call - change endpoint to match your API
-                        const res = await fetch('/api/auth/register', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ ...payload, platform }),
+                      const payload = {
+                        ...formData,
+                        videolinks: mergedVideoLinks,
+                      };
+                      console.log({ ...payload, platform });
+                      // Example backend call - change endpoint to match your API
+                      // const res = await fetch("/api/auth/register", {
+                      //   method: "POST",
+                      //   headers: { "Content-Type": "application/json" },
+                      //   body: JSON.stringify({ ...payload, platform }),
+                      // });
+                      axios
+                        .request({
+                          method: "POST",
+                          url: `${
+                            import.meta.env.VITE_API_URL
+                          }/api/register/creator`,
+                          data: { ...payload, platform },
+                        })
+                        .then((response) => {
+                          console.log(response.data);
+                          setSuccess(true);
+                        })
+                        .catch((error) => {
+                          console.error(error);
                         });
-
-                        if (!res.ok) {
-                          const text = await res.text().catch(() => '');
-                          throw new Error(text || `Server returned ${res.status}`);
-                        }
-                        setSuccess(true);
-                      } catch (err) {
-                        setError(err.message || 'Registration failed.');
-                      } finally {
-                        setLoading(false);
-                      }
+                      //   if (!res.ok) {
+                      //     const text = await res.text().catch(() => "");
+                      //     throw new Error(
+                      //       text || `Server returned ${res.status}`
+                      //     );
+                      //   }
+                      //   setSuccess(true);
+                      // } catch (err) {
+                      //   setError(err.message || "Registration failed.");
+                      // } finally {
+                      //   setLoading(false);
+                      // }
                     }}
                     className="flex-1 rounded-lg bg-black py-3 font-semibold text-white transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:ring-offset-2"
                   >
-                    {loading ? 'Submitting...' : 'Create Account'}
+                    {loading ? "Submitting..." : "Create Account"}
                   </button>
                 </div>
               </>
             )}
 
             {error && <div className="text-sm text-red-600">{error}</div>}
-            {success && <div className="text-sm text-green-600">Account created — check your email (or adjust endpoint)</div>}
+            {success && (
+              <div className="text-sm text-green-600">
+                Account created — check your email (or adjust endpoint)
+              </div>
+            )}
           </form>
-
-
-
 
           {/* Sign In Link */}
           <div className="text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link to="/signin" className="font-medium text-red-500 hover:underline">
+            Already have an account?{" "}
+            <Link
+              to="/signin"
+              className="font-medium text-red-500 hover:underline"
+            >
               Sign In
             </Link>
           </div>
           {/* Business? link */}
           <div className="text-center text-sm text-gray-600">
-            Have a business?{' '}
-            <Link to="/business/signup" className="font-medium text-red-500 hover:underline">
+            Have a business?{" "}
+            <Link
+              to="/business/signup"
+              className="font-medium text-red-500 hover:underline"
+            >
               Create a Business Account
             </Link>
           </div>
