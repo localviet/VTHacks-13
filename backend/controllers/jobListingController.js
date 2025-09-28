@@ -10,7 +10,7 @@ const createJobListing = (req, res) => {
     title: title,
     desc: desc,
     salaryRange: salaryRange,
-    postedBy: req.user._id,
+    company: req.user._id,
   };
   console.log(jobListingData);
   JobListing.create(jobListingData)
@@ -39,7 +39,7 @@ const getAllJobListings = async (req, res) => {
       .sort({ createdAt: -1 }) // newest first
       .skip((page - 1) * limit)
       .limit(limit)
-      .populate("postedBy", "name email"); // optional: include CorpUser info
+        .populate("company", "name email"); // optional: include CorpUser info
 
     res.status(200).json({
       page,
@@ -54,6 +54,21 @@ const getAllJobListings = async (req, res) => {
   }
 };
 
+const getJobListingById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: 'Missing id parameter' });
+
+    const job = await JobListing.findById(id).populate('company', 'name email website logo');
+    if (!job) return res.status(404).json({ message: 'Job listing not found' });
+
+    return res.status(200).json({ jobListing: job });
+  } catch (error) {
+    console.error('Error fetching job listing by id:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
 //jobListingRouter.get("/all-job-listings", getAllJobListings);
 //jobListingRouter.get("/job-listing/:id", getJobListingById);
-export { createJobListing, getAllJobListings };
+export { createJobListing, getAllJobListings, getJobListingById };
