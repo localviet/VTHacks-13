@@ -10,9 +10,7 @@ export default function BusinessView() {
     logo: "https://placeholder.com/150",
     about: "We are a leading technology solutions provider specializing in innovative software development and digital transformation. Our team of experts is dedicated to delivering cutting-edge solutions that help businesses thrive in the digital age.",
     website: "https://techsolutions.example.com",
-    location: "San Francisco, CA",
-    industry: "Technology",
-    founded: "2015",
+    tags: ["Technology", "Software", "Innovation"],
     employeeCount: "50-100"
   };
 
@@ -24,7 +22,6 @@ export default function BusinessView() {
         <header className="bg-white shadow-sm border-b p-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">{business.name}</h1>
-            <p className="text-gray-600 mt-1">{business.location}</p>
           </div>
         </header>
 
@@ -51,18 +48,22 @@ export default function BusinessView() {
                     {business.website}
                   </a>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b">
-                  <span className="text-gray-600">Industry</span>
-                  <span className="text-gray-900">{business.industry}</span>
+
+                {/* Tags - modern chips displayed under Website */}
+                <div className="py-3">
+                  <span className="text-gray-600 block mb-2">Tags</span>
+                  <div className="flex flex-wrap gap-3">
+                    {(business.tags || []).map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-500 shadow"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b">
-                  <span className="text-gray-600">Founded</span>
-                  <span className="text-gray-900">{business.founded}</span>
-                </div>
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-gray-600">Company Size</span>
-                  <span className="text-gray-900">{business.employeeCount} employees</span>
-                </div>
+
               </div>
             </div>
           </div>
