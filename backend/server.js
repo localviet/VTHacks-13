@@ -3,6 +3,7 @@ import express, { Router } from "express";
 import dotenv from "dotenv";
 import apiRouter from "./routes/accountRoutes.js";
 import offerRouter from "./routes/offerRoutes.js";
+import hashtagRoutes from "./routes/hashtagRoutes.js";
 import jobListingRouter from "./routes/jobListingRoutes.js";
 import cors from "cors";
 dotenv.config();
@@ -15,6 +16,8 @@ app.use(cors());
 app.use(express.json()); //to be able to send json data
 
 app.use("/api/", apiRouter);
+// Mount hashtag routes under /gem
+app.use("/gem", hashtagRoutes);
 app.use("/offer/", offerRouter);
 app.use("/job-listing/", jobListingRouter);
 // connect to db
