@@ -31,6 +31,7 @@ VITE_API_URL = <http link to backend>
 npm run dev
 ```
 # Project Structure
+```
 .
 └── VTHacks-13/
     ├── backend/                     #to host backend server
@@ -47,3 +48,4 @@ npm run dev
     │       ├── components/          #React components
     │       └── pages/               #web pages
     │           └── Business/        #web pages for businesses
+```
