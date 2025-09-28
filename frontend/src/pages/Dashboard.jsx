@@ -74,28 +74,50 @@ export default function IgniteDashboard() {
   /*const handleViewAll = async () => {
   setLoadingOffers(true);
   setErrorOffers("");
+
+  // define the order: Active → Pending → Review → everything else
+  const statusOrder = { active: 1, pending: 2, review: 3 };
+
   try {
     const base = import.meta.env.VITE_BACKEND_URL;
+    let offers = [];
+
     if (base) {
       const res = await axios.get(`${base}/offer/get-received-offers`);
-      setOfferList(Array.isArray(res.data) ? res.data : res.data?.offers ?? []);
+      offers = Array.isArray(res.data) ? res.data : res.data?.offers ?? [];
     } else {
       // no backend? use local file under /public
       const res = await fetch("/offers.json");
       const data = await res.json();
-      setOfferList(data);
+      offers = data;
     }
+
+    // apply sorting
+    offers.sort((a, b) => {
+      const orderA = statusOrder[(a.status || "").toLowerCase()] || 99;
+      const orderB = statusOrder[(b.status || "").toLowerCase()] || 99;
+      return orderA - orderB;
+    });
+
+    setOfferList(offers);
     setShowBrandsModal(true);
   } catch (err) {
     setErrorOffers("Failed to fetch offers; showing mock data.");
-    // graceful fallback
-    setOfferList(sampleOffers);
+
+    // graceful fallback (also sorted)
+    let offers = sampleOffers.slice();
+    offers.sort((a, b) => {
+      const orderA = statusOrder[(a.status || "").toLowerCase()] || 99;
+      const orderB = statusOrder[(b.status || "").toLowerCase()] || 99;
+      return orderA - orderB;
+    });
+
+    setOfferList(offers);
     setShowBrandsModal(true);
   } finally {
     setLoadingOffers(false);
   }
-};
-*/
+};*/
 
   // REAL FETCH
   const handleViewAll = async () => {
@@ -104,7 +126,7 @@ export default function IgniteDashboard() {
       setErrorOffers("");
       console.log("Fetching offers...");
 
-      const token = localStorage.getItem("token"); // or however you store it
+      const token = localStorage.getItem("token");
 
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/offer/get-received-offers`,
@@ -115,7 +137,17 @@ export default function IgniteDashboard() {
         }
       );
 
-      setOfferList(Array.isArray(res.data) ? res.data : res.data?.offers ?? []);
+      const statusOrder = { active: 1, pending: 2, review: 3 };
+
+      let offers = Array.isArray(res.data) ? res.data : res.data?.offers ?? [];
+
+      offers.sort((a, b) => {
+        const orderA = statusOrder[(a.status || "").toLowerCase()] || 99;
+        const orderB = statusOrder[(b.status || "").toLowerCase()] || 99;
+        return orderA - orderB;
+      });
+
+      setOfferList(offers);
       setShowBrandsModal(true);
     } catch (err) {
       setErrorOffers(err?.response?.data?.message || "Failed to fetch offers");
