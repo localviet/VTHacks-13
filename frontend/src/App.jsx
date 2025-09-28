@@ -7,6 +7,7 @@ import SignInPage from "./pages/SignIn.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Search from "./pages/Search.jsx";
 import Settings from "./pages/Settings.jsx";
+import View from "./pages/BusinessView.jsx";
 
 //Business
 import DashboardBusiness from "./pages/Business/DashboardBusiness.jsx";
@@ -25,17 +26,13 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/search" element={<Search />} /> 
           <Route path="/settings" element={<Settings />} />
           <Route path="/business/signup" element={<BusinessSignUp />} />
           <Route path="business/dashboard" element={<DashboardBusiness />} />
           <Route path="business/search" element={<BusinessSearch />} />
-<<<<<<< HEAD
-          <Route path="business/settings" element={<BusinessSettings />} />
-
-=======
           <Route path="business/setting" element={<BusinessSettings />} />
->>>>>>> 926002ef34ad6511ecfbe0e985fad848ae3610b5
+          <Route path="/view" element={<View />} />
         </Routes>
       </Router>
     </>
