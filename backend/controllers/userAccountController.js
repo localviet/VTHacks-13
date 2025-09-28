@@ -179,6 +179,44 @@ const refresh = asyncHandler(async (req, res) => {
   );
 });
 
+// @desc    Get all users (creators and corp users)
+// @route   GET /api/users
+// @access  Public (adjust with auth if needed)
+const getAllUsers = asyncHandler(async (req, res) => {
+  try {
+    const creators = await CreatorUser.find().select('-password');
+    const corps = await CorpUser.find().select('-password');
+    return res.status(200).json({ creators, corps });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// @desc    Get user by id (search creators and corps)
+// @route   GET /api/users/:id
+// @access  Public
+const getUserById = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: 'Missing id parameter' });
+
+    let user = await CreatorUser.findById(id).select('-password').populate('offers');
+    let userType = 'CreatorUser';
+    if (!user) {
+      user = await CorpUser.findById(id).select('-password').populate('offers');
+      userType = 'CorpUser';
+    }
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    return res.status(200).json({ user, userType });
+  } catch (error) {
+    console.error('Error fetching user by id:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Middleware to authenticate CorpUser
 function authenticateCorpToken(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -214,6 +252,8 @@ export {
   creatorUserRegister,
   corpUserRegister,
   refresh,
+  getAllUsers,
+  getUserById,
   authenticateCorpToken,
   authenticateCreatorToken,
 };

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Settings, Search, Filter, Users } from "lucide-react";
 import BusinessSidebar from "../../components/BusinessSidebar.jsx";
+import { Link } from "react-router-dom";
 
 export default function BusinessesView() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -9,50 +10,66 @@ export default function BusinessesView() {
 
   const filters = ["All", "Tech", "Fashion", "Beauty", "Food", "Travel", "Fitness"];
 
-  // Sample UGC creators data
-  const creators = [
-    {
-      id: 1,
-      name: "Ava Reynolds",
-      socials: [
-        { platform: "Instagram", handle: "@avareynolds", followers: 125000 },
-        { platform: "TikTok", handle: "@ava.tok", followers: 98000 },
-        { platform: "YouTube", handle: "AvaReynolds", followers: 22000 }
-      ],
-      imageUrl: "https://picsum.photos/id/1/200/300",
-      bio: "Lifestyle creator focusing on eco-friendly living, affordable style, and short-form storytelling.",
-      tags: ["lifestyle", "sustainable", "fashion"],
-    },
-    {
-      id: 2,
-      name: "Marco Diaz",
-      socials: [
-        { platform: "TikTok", handle: "@marcodoesfitness", followers: 340000 },
-        { platform: "Instagram", handle: "@marco.fit", followers: 120000 }
-      ],
-      imageUrl: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=1200&q=80&auto=format&fit=crop",
-      bio: "Fitness coach sharing at-home routines, nutrition tips, and transformation stories.",
-      tags: ["fitness", "wellness", "home-workout"],
-    },
-    {
-      id: 3,
-      name: "Sofia Chen",
-      socials: [
-        { platform: "Instagram", handle: "@sofia.chen", followers: 89000 },
-        { platform: "YouTube", handle: "Sofia C", followers: 42000 }
-      ],
-      imageUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1200&q=80&auto=format&fit=crop",
-      bio: "Beauty and skincare creator sharing routine breakdowns and product reviews.",
-      tags: ["beauty", "skincare", "reviews"],
-    }
-  ];
+  // creators will be loaded from backend
+  const [creators, setCreators] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // backend mounts account routes at /api/ (see backend/server.js)
+        // default to localhost backend port used in backend/server.js if VITE_API_BASE is not set
+        const apiBase = import.meta.env.VITE_API_BASE || "http://localhost:5001";
+        const res = await fetch(`${apiBase}/api/users`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const contentType = res.headers.get("content-type") || "";
+        if (!contentType.includes("application/json")) {
+          const text = await res.text();
+          throw new Error(`Expected JSON response but received: ${text.slice(0, 300)}`);
+        }
+        const data = await res.json();
+
+        // data expected shape: { creators: [...], corps: [...] }
+        const creatorsFromApi = (data.creators || []).map((c) => ({
+          id: c._id,
+          name: `${c.firstName || c.name || ""} ${c.lastName || ""}`.trim() || c.name || c.email,
+          socials: c.socials || [],
+          imageUrl: c.imageUrl || c.avatar || `https://picsum.photos/seed/${c._id}/600/400`,
+          bio: c.bio || c.description || "",
+          tags: (c.tags || []).map((t) => t.toLowerCase()),
+        }));
+
+        const corpsFromApi = (data.corps || []).map((c) => ({
+          id: c._id,
+          name: c.name || c.businessName || c.email,
+          socials: c.socials || [],
+          imageUrl: c.imageUrl || c.logoUrl || `https://picsum.photos/seed/corp-${c._id}/600/400`,
+          bio: c.about || c.description || "",
+          tags: (c.tags || []).map((t) => t.toLowerCase()),
+        }));
+
+        // combine both lists into creators array
+        setCreators([...creatorsFromApi, ...corpsFromApi]);
+      } catch (err) {
+        console.error("Failed to fetch users", err);
+        setError(err.message || "Failed to fetch");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const filteredCreators = creators.filter((c) => {
     const term = searchTerm.toLowerCase();
     const matchesName = c.name.toLowerCase().includes(term);
-    const matchesTag = c.tags.some((t) => t.toLowerCase().includes(term));
+    const matchesTag = (c.tags || []).some((t) => t.toLowerCase().includes(term));
     return matchesName || matchesTag || term === "";
-  }).filter((c) => selectedFilter === "All" || c.tags.includes(selectedFilter.toLowerCase()));
+  }).filter((c) => selectedFilter === "All" || (c.tags || []).includes(selectedFilter.toLowerCase()));
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -96,14 +113,21 @@ export default function BusinessesView() {
         </div>
 
         <main className="p-6">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {loading && (
+              <div className="col-span-full text-center py-12">Loading creators...</div>
+            )}
+            {error && (
+              <div className="col-span-full text-center py-12 text-red-500">Error: {error}</div>
+            )}
+
             {filteredCreators.map((creator) => {
               // pick top 2 socials by followers
               const topSocials = (creator.socials || []).slice().sort((a, b) => (b.followers || 0) - (a.followers || 0)).slice(0, 2);
               const totalFollowers = (creator.socials || []).reduce((s, so) => s + (so.followers || 0), 0);
 
               return (
-                <div key={creator.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                <Link to={`/user/${creator.id}`} key={creator.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
                   {/* Top bar with name and socials */}
                   <div className="p-4 flex items-center justify-between border-b">
                     <div>
@@ -131,6 +155,7 @@ export default function BusinessesView() {
                       src={creator.imageUrl}
                       alt={`${creator.name} profile`}
                       className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                      onError={(e) => { e.target.onerror = null; e.target.src = `https://picsum.photos/seed/${creator.id}/600/400`; }}
                     />
 
                     <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 transition-colors duration-300 flex items-end">
@@ -147,12 +172,8 @@ export default function BusinessesView() {
                         <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">#{tag}</span>
                       ))}
                     </div>
-
-                    <div className="flex items-center gap-3 w-full md:w-auto">
-                      <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 w-full md:w-auto">Invite</button>
-                    </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
