@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Settings, Search, Eye, FileText, DollarSign } from "lucide-react";
 import { useState } from "react";
 import { Settings, Search, Eye, FileText, DollarSign } from "lucide-react";
 import Sidebar from "../components/sidebar.jsx";
@@ -5,11 +8,33 @@ import axios from "axios";
 
 export default function IgniteDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [offers, setOffers] = useState([]);
   const [showBrandsModal, setShowBrandsModal] = useState(false);
   const [offerList, setOfferList] = useState([]);
   const [loadingOffers, setLoadingOffers] = useState(false);
   const [errorOffers, setErrorOffers] = useState("");
   const user = "Alex";
+  useEffect(() => {
+    // Fetch offers from the backend API
+    console.log(localStorage.getItem("accessToken"));
+    axios
+      .request({
+        url: `${import.meta.env.VITE_API_URL}/offer/get-received-offers`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // Include authentication token if required
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        console.log("Response status:", res.data.offers);
+        setOffers(res.data.offers); // Assuming the response contains an 'offers' array
+      })
+      .catch((error) => {
+        console.error("Error fetching offers:", error);
+      });
+  }, []);
 
   // Testing
   /*
@@ -74,44 +99,80 @@ export default function IgniteDashboard() {
   /*const handleViewAll = async () => {
   setLoadingOffers(true);
   setErrorOffers("");
+
+  // define the order: Active → Pending → Review → everything else
+  const statusOrder = { active: 1, pending: 2, review: 3 };
+
   try {
     const base = import.meta.env.VITE_BACKEND_URL;
+    let offers = [];
+
     if (base) {
       const res = await axios.get(`${base}/offer/get-received-offers`);
-      setOfferList(Array.isArray(res.data) ? res.data : res.data?.offers ?? []);
+      offers = Array.isArray(res.data) ? res.data : res.data?.offers ?? [];
     } else {
       // no backend? use local file under /public
       const res = await fetch("/offers.json");
       const data = await res.json();
-      setOfferList(data);
+      offers = data;
     }
+
+    // apply sorting
+    offers.sort((a, b) => {
+      const orderA = statusOrder[(a.status || "").toLowerCase()] || 99;
+      const orderB = statusOrder[(b.status || "").toLowerCase()] || 99;
+      return orderA - orderB;
+    });
+
+    setOfferList(offers);
     setShowBrandsModal(true);
   } catch (err) {
     setErrorOffers("Failed to fetch offers; showing mock data.");
-    // graceful fallback
-    setOfferList(sampleOffers);
+
+    // graceful fallback (also sorted)
+    let offers = sampleOffers.slice();
+    offers.sort((a, b) => {
+      const orderA = statusOrder[(a.status || "").toLowerCase()] || 99;
+      const orderB = statusOrder[(b.status || "").toLowerCase()] || 99;
+      return orderA - orderB;
+    });
+
+    setOfferList(offers);
     setShowBrandsModal(true);
   } finally {
     setLoadingOffers(false);
   }
-};
-*/
+};*/
 
   // REAL FETCH
   const handleViewAll = async () => {
     try {
       setLoadingOffers(true);
-      console.log("Fetching offers...");
       setErrorOffers("");
+      console.log("Fetching offers...");
+
+      const token = localStorage.getItem("token");
+
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/offer/get-received-offers`,
         {
-          // If you need auth: headers: { Authorization: `Bearer ${token}` }
-          // If you need query params: params: { page: 1, limit: 20 }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      // Adjust shape if your API wraps data: res.data.data or res.data.offers, etc.
-      setOfferList(Array.isArray(res.data) ? res.data : res.data?.offers ?? []);
+
+      const statusOrder = { active: 1, pending: 2, review: 3 };
+
+      let offers = Array.isArray(res.data) ? res.data : res.data?.offers ?? [];
+
+      offers.sort((a, b) => {
+        const orderA = statusOrder[(a.status || "").toLowerCase()] || 99;
+        const orderB = statusOrder[(b.status || "").toLowerCase()] || 99;
+        return orderA - orderB;
+      });
+
+      setOfferList(offers);
       setShowBrandsModal(true);
     } catch (err) {
       setErrorOffers(err?.response?.data?.message || "Failed to fetch offers");
@@ -147,8 +208,40 @@ export default function IgniteDashboard() {
       change: "+15.3%",
       color: "bg-purple-500",
     },
+    {
+      label: "Total Views",
+      value: "1.2M",
+      icon: Eye,
+      change: "+12.5%",
+      color: "bg-blue-500",
+    },
+    {
+      label: "Posts",
+      value: "234",
+      icon: FileText,
+      change: "+8",
+      color: "bg-green-500",
+    },
+    {
+      label: "Money Earned",
+      value: "$5,847",
+      icon: DollarSign,
+      change: "+15.3%",
+      color: "bg-purple-500",
+    },
   ];
 
+  // const offers = [
+  //   { brand: "Nike", amount: "$2,500", status: "Active", deadline: "Dec 15" },
+  //   { brand: "Apple", amount: "$4,200", status: "Pending", deadline: "Dec 20" },
+  //   { brand: "Tesla", amount: "$8,000", status: "Active", deadline: "Jan 5" },
+  //   {
+  //     brand: "Netflix",
+  //     amount: "$1,800",
+  //     status: "Review",
+  //     deadline: "Dec 18",
+  //   },
+  // ];
   const offers = [
     { brand: "Nike", amount: "$2,500", status: "Active", deadline: "Dec 15" },
     { brand: "Apple", amount: "$4,200", status: "Pending", deadline: "Dec 20" },
@@ -165,8 +258,14 @@ export default function IgniteDashboard() {
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Main Content */}
+      <div
+        className={`flex-1 transition-all duration-300 ${
+          sidebarOpen ? "ml-64" : "ml-16"
+        }`}
+      >
       <div
         className={`flex-1 transition-all duration-300 ${
           sidebarOpen ? "ml-64" : "ml-16"
@@ -176,6 +275,9 @@ export default function IgniteDashboard() {
         <header className="bg-white shadow-sm border-b p-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Welcome {user}</h1>
+            <p className="text-gray-600 mt-1">
+              Here's what's happening with your content today
+            </p>
             <p className="text-gray-600 mt-1">
               Here's what's happening with your content today
             </p>
@@ -191,6 +293,10 @@ export default function IgniteDashboard() {
                 key={index}
                 className="bg-white rounded-xl p-6 shadow-sm border"
               >
+              <div
+                key={index}
+                className="bg-white rounded-xl p-6 shadow-sm border"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm">{stat.label}</p>
@@ -200,7 +306,16 @@ export default function IgniteDashboard() {
                     <p className="text-green-600 text-sm mt-1">
                       {stat.change} from last month
                     </p>
+                    <p className="text-3xl font-bold text-gray-900 mt-1">
+                      {stat.value}
+                    </p>
+                    <p className="text-green-600 text-sm mt-1">
+                      {stat.change} from last month
+                    </p>
                   </div>
+                  <div
+                    className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
+                  >
                   <div
                     className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
                   >
@@ -215,6 +330,10 @@ export default function IgniteDashboard() {
           <div className="bg-white rounded-xl shadow-sm border">
             <div className="p-6 border-b">
               <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Active Offers
+                </h2>
+                <button className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors">
                 <h2 className="text-xl font-bold text-gray-900">
                   Active Offers
                 </h2>
@@ -233,13 +352,28 @@ export default function IgniteDashboard() {
                     key={index}
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
+                    {console.log("offer:", offer)}
+
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">
+                          {offer.fromName.charAt(0)}
+                        </span>
                         <span className="text-white font-bold text-sm">
                           {offer.brand[0]}
                         </span>
                       </div>
                       <div>
+                        <h3 className="font-semibold text-gray-900">
+                          {offer.fromName}
+                        </h3>
+                        <p className="text-gray-600 text-sm">
+                          Due: {offer.deadline}
+                        </p>
                         <h3 className="font-semibold text-gray-900">
                           {offer.brand}
                         </h3>
@@ -250,6 +384,18 @@ export default function IgniteDashboard() {
                     </div>
 
                     <div className="flex items-center gap-4">
+                      <span className="text-2xl font-bold text-gray-900">
+                        {offer.salary}
+                      </span>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          offer.status === "Active"
+                            ? "bg-green-100 text-green-800"
+                            : offer.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-blue-100 text-blue-800"
+                        }`}
+                      >
                       <span className="text-2xl font-bold text-gray-900">
                         {offer.amount}
                       </span>
@@ -288,12 +434,6 @@ export default function IgniteDashboard() {
             <div className="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">All Offers</h2>
-                <button
-                  className="rounded-md px-2 py-1 text-gray-600 hover:bg-gray-100"
-                  onClick={() => setShowBrandsModal(false)}
-                >
-                  ×
-                </button>
               </div>
 
               {/* Loading / error states */}
@@ -374,3 +514,4 @@ export default function IgniteDashboard() {
     </div>
   );
 }
+
