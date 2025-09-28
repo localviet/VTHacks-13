@@ -5,6 +5,7 @@ import apiRouter from "./routes/accountRoutes.js";
 import offerRouter from "./routes/offerRoutes.js";
 import hashtagRoutes from "./routes/hashtagRoutes.js";
 import jobListingRouter from "./routes/jobListingRoutes.js";
+import geminiRoutes from "./routes/geminiRoutes.js";
 import cors from "cors";
 dotenv.config();
 
@@ -20,6 +21,8 @@ app.use("/api/", apiRouter);
 app.use("/gem", hashtagRoutes);
 app.use("/offer/", offerRouter);
 app.use("/job-listing/", jobListingRouter);
+// Gemini summarization routes
+app.use('/api/gemini', geminiRoutes);
 // connect to db
 connectDB().then(() => {
   app.listen(PORT, () => {
