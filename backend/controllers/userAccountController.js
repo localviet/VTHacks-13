@@ -117,25 +117,25 @@ const creatorUserRegister = asyncHandler(async (req, res) => {
 });
 
 const corpUserRegister = asyncHandler(async (req, res) => {
-  const { name, password, email, phone } = req.body;
-  if (!name || !password || !email || !phone) {
+  const { businessName, email, password, website } = req.body;
+  console.log("in corp register with", req.body);
+  if (!businessName || !password || !email || !website) {
     return res.status(400).json({ message: "all fields are required" });
   }
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
   const corpData = {
-    name: name,
+    name: businessName,
     password: hashedPassword,
     email: email,
-    phone: phone,
   };
 
   const corp = await CorpUser.create(corpData);
   return res.status(201).json({
     message: "Password registered, corp user created successfully",
     corp: {
-      name: `${name}`,
+      name: `${businessName}`,
       corpId: corp._id,
     },
   });
