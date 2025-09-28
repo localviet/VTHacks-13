@@ -2,7 +2,7 @@
 ### Streamlined match between UGC creators and businesses
 User-generated content is the most effective form of modern marketing—customers trust it more than ads, and it drives engagement and conversions up to 6x higher. Traditional advertising is expensive, impersonal, and increasingly ignored. But connecting with content creators manually is time consuming and difficult. That’s why we built Ignite: a platform that connects brands directly with creators to produce authentic, scalable content at a fraction of the cost of typical ads.
 
-## Set up
+# Set up
 ### Backend
 1. cd into the backend folder.
 2. create a .env file. Add these variables:
